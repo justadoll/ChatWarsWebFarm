@@ -1,7 +1,7 @@
 from rest_framework import serializers
-from .models import CW_players
+from main.models import CW_players
 
-class PlayerSerializer(serializers.HyperlinkedModelSerializer):
+class PlayerSerializer(serializers.ModelSerializer):
     class Meta:
         model = CW_players
-        fields = ('id','chw_username', 'username', 'status', 'player_class')
+        fields = ['id', 'chw_username', 'username', 'status', 'player_class']

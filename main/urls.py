@@ -1,13 +1,12 @@
 from django.urls import path, include
-from rest_framework import routers
-#from .views import index
-from . import views
+from main import views
 
 
-router = routers.DefaultRouter()
-router.register(r'players', views.PlayerViewSet)
+#router = routers.DefaultRouter()
+#router.register(r'players', views.PlayerViewSet)
 
 urlpatterns = [
-        path('',include(router.urls)),
-        #path('',index, name='main'),
+        path('', views.index, name='main'),
+        path('players/',views.players_list),
+        path('player/<int:pk>/',views.indiv_player),
         ]
