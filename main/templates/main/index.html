@@ -1,0 +1,131 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>::Dashboard::</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <!-- There is a conflict with this 2 csses -->
+        <!-- makes is smaller and colorful td's like .info, .error and etc... <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"> -->
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+        <link href="https://fonts.googleapis.com/css?family=Poppins:200,300,400,600,700,800" rel="stylesheet" />
+        <link href="https://use.fontawesome.com/releases/v5.0.6/css/all.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>        
+        <link rel="stylesheet" href="{% static 'main/style.css'%}">
+
+    </head>
+    
+    <body>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <a class="navbar-brand" href="#">Django ChatWars Web Farm</a>
+            <div class="collapse navbar-collapse" id="navbarText">
+              <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                  <a class="nav-link" href="{% url 'main' %}">Home <span class="sr-only"></span></a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="#">Statics</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="#">About</a>
+                </li>
+                <li>
+                  <div class="clock">
+                    <div class="block" data-num="0"></div>
+                    <div class="block" data-num="1"></div>
+                    <div class="block" data-num="2"></div>
+                    <div class="block" data-num="3"></div>
+                    <div class="block" data-num="4"></div>
+                    <div class="block" data-num="5"></div>
+                    <div class="block" data-num="6"></div>
+                    <div class="block" data-num="7"></div>
+                    <div class="block" data-num="8"></div>
+                    <div class="block" data-num="9"></div>
+                    <div class="block" data-num="10"></div>
+                    <div class="block" data-num="11"></div>
+                    <div class="block" data-num="12"></div>
+                    <div class="block" data-num="13"></div>
+                    <div class="block" data-num="14"></div>
+                    <div class="block" data-num="15"></div>
+                    <div class="block" data-num="16"></div>
+                    <div class="block" data-num="17"></div>
+                    <div class="block" data-num="18"></div>
+                    <div class="block" data-num="19"></div>
+                    <div class="block" data-num="20"></div>
+                    <div class="block" data-num="21"></div>
+                    <div class="block" data-num="22"></div>
+                    <div class="block" data-num="23"></div>
+                    <div class="block" data-num="24"></div>
+                    <div class="block" data-num="25"></div>
+                    <div class="block" data-num="26"></div>
+                    <div class="block" data-num="27"></div>
+                    <div class="block" data-num="28"></div>
+                    <div class="block" data-num="29"></div>
+                    <div class="block" data-num="30"></div>
+                    <div class="block" data-num="31"></div>
+                    <div class="block" data-num="32"></div>
+                    <div class="block" data-num="33"></div>
+                    <div class="block" data-num="34"></div>
+                    <div class="block" data-num="35"></div>
+                    <div class="block" data-num="36"></div>
+                    <div class="block" data-num="37"></div>
+                    <div class="block" data-num="38"></div>
+                    <div class="block" data-num="39"></div>
+                    <div class="block" data-num="40"></div>
+                    <div class="block" data-num="41"></div>
+                    <div class="block" data-num="42"></div>
+                    <div class="block" data-num="43"></div>
+                    <div class="block" data-num="44"></div>
+                    <div class="block" data-num="45"></div>
+                    <div class="block" data-num="46"></div>
+                    <div class="block" data-num="47"></div>
+                    <div class="block" data-num="48"></div>
+                    <div class="block" data-num="49"></div>
+                    <div class="block" data-num="50"></div>
+                    <div class="block" data-num="51"></div>
+                    <div class="block" data-num="52"></div>
+                    <div class="block" data-num="53"></div>
+                    <div class="block" data-num="54"></div>
+                    <div class="block" data-num="55"></div>
+                    <div class="block" data-num="56"></div>
+                    <div class="block" data-num="57"></div>
+                    <div class="block" data-num="58"></div>
+                    <div class="block" data-num="59"></div>
+                    <div class="divider"></div>
+                  </div>
+                  <script  src="{% static 'main/script.js' %}"></script>
+                </li>
+              </ul>
+            </div>
+          </nav>
+
+          
+            <table class="table table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <th class="text-center">UserPicture</th>
+                        <th class="text-center">Player Name</th>
+                        <th class="text-center">Username</th>
+                        <th class="text-center">Class</th>
+                        <th class="text-center">Status</th>
+                    </tr>
+                </thead>
+                {% for player in cw_playa %}
+                <tbody>
+                  <tr>
+                      <td class="text-center">404</td>
+                      <td class="text-center">{{ player.chw_username }}</td>
+                      <td class="text-center">{{ player.username }}</td>
+                      <td class="text-center">{{ player.player_class }}</td>
+                      <td class="text-center">{{ player.status }}</td> <!-- setting colour depends from status -->
+                  </tr>
+                </tbody>
+                {% endfor %}
+
+            </table>
+            </div>
+        </table>   
+    </body>
+</html>
