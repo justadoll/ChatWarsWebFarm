@@ -8,6 +8,30 @@ from .models import CW_players
 from .serializers import PlayerSerializer
 from loguru import logger
 
+from .chw_manager import *
+import asyncio
+from channels.db import database_sync_to_async
+
+def chw_manager(action, id):
+    # TODO: mathces for `action` from python3.10?
+    # https://stackoverflow.com/questions/62390314/how-to-call-asynchronous-function-in-django
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    if action == "get_user_data":
+        async_result = loop.run_until_complete(get_user_data("1ApWapzMBu3P1gqGRIb-6nhKhjSGJSHktSVqa9E37cftifP4zCwv2u0pANr8iPQw13ueNzUWRrJn3fbAlwFiN6y4X9zkB1l2BnC5_XLjrg91IsJNBxyFqeyJy6O9oXVJ2f-nhYuqt0Wx-RPbuXP2TKyMsfqrmiBdWIcxLwqQnkFA8hEDcX2dyEwQUylbR83B_Ka3N99-ku-RkIFEs5EQ0-6rkTHXD7FA8Hn_DpDBcC0HYueYw9zdKphqtfKkZ1_38d3Y0SzbXlotoiunXjP3P6mE2c6h-nfIs3W7HuEUHZxrrmaqxwDYf5Db0R1ylAXy--HTYeAa9jFSyGF6t1wvD1dHyF8LReNA="))
+        logger.debug(async_result)
+        loop.close()
+    elif action == "quest_run":
+        async_result = loop.run_until_complete(mainQuestRun("1ApWapzMBu3P1gqGRIb-6nhKhjSGJSHktSVqa9E37cftifP4zCwv2u0pANr8iPQw13ueNzUWRrJn3fbAlwFiN6y4X9zkB1l2BnC5_XLjrg91IsJNBxyFqeyJy6O9oXVJ2f-nhYuqt0Wx-RPbuXP2TKyMsfqrmiBdWIcxLwqQnkFA8hEDcX2dyEwQUylbR83B_Ka3N99-ku-RkIFEs5EQ0-6rkTHXD7FA8Hn_DpDBcC0HYueYw9zdKphqtfKkZ1_38d3Y0SzbXlotoiunXjP3P6mE2c6h-nfIs3W7HuEUHZxrrmaqxwDYf5Db0R1ylAXy--HTYeAa9jFSyGF6t1wvD1dHyF8LReNA=",1))
+        #async_result = loop.run_until_complete(mainQuestRun("1ApWapzMBu03MvpeDgB0qC81VWCu4r7dxrUaAx8lE5FYP_fwnuk_ifFCdh0L5Psee_Sm-g__ZH9SDoOxcWxjgoFmcSRL9lLGmq1QDKSMf6pEN0CpI4qFfgM0OrnKigM4hAfXb_GFesTLVT3o2cDoKEQshrBf3oXzRrzX1MRKG4dA5I7gv1UQIFtHaABUuZcW8kIgKUgtSN4QMBoaiU4SMh0iqCGnqGqLD3c7Ex6OqJhG77JVbH4UPbwdFIdkUP93PD9sHfAp94se-HoeDtslELxUqL8cYFb7ARj04s2K4cJAL3K1vtBJKofHIggRfrAKVjvo4qfqb1y4Y3-aHnZArQrlvcAx_g5o=",3))
+        logger.debug(async_result)
+        loop.close()
+    elif action == "get_game_time":
+        async_result = loop.run_until_complete(get_game_time("1ApWapzMBu3P1gqGRIb-6nhKhjSGJSHktSVqa9E37cftifP4zCwv2u0pANr8iPQw13ueNzUWRrJn3fbAlwFiN6y4X9zkB1l2BnC5_XLjrg91IsJNBxyFqeyJy6O9oXVJ2f-nhYuqt0Wx-RPbuXP2TKyMsfqrmiBdWIcxLwqQnkFA8hEDcX2dyEwQUylbR83B_Ka3N99-ku-RkIFEs5EQ0-6rkTHXD7FA8Hn_DpDBcC0HYueYw9zdKphqtfKkZ1_38d3Y0SzbXlotoiunXjP3P6mE2c6h-nfIs3W7HuEUHZxrrmaqxwDYf5Db0R1ylAXy--HTYeAa9jFSyGF6t1wvD1dHyF8LReNA="))
+        loop.close()
+        return async_result
+    else:
+        logger.error("wtf?")
 
 @api_view(['GET','POST'])
 def players_list(request):
@@ -40,11 +64,11 @@ def indiv_player(request,pk):
         serializer = PlayerSerializer(player, data=data, fields=('id','chw_username','username','status'))
         if serializer.is_valid():
             serializer.save()
-            logger.debug(player.session)
-            # threads or recode to async?
             for test in serializer:
                 if test.value == "Run":
                     logger.debug("Run, forest, run!")
+                    #chw_manager("quest_run", 0)
+                    logger.info(chw_manager("get_game_time", None))
                     return JsonResponse(serializer.data)
                 else:
                     pass
