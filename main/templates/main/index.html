@@ -14,6 +14,7 @@
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>        
         <link rel="stylesheet" href="{% static 'main/style.css'%}">
+        <script src={%static 'main/jquery-3.6.0.min.js'%}></script>
 
     </head>
     
@@ -110,6 +111,7 @@
                         <th class="text-center">Username</th>
                         <th class="text-center">Class</th>
                         <th class="text-center">Status</th>
+                        <th class="text-center">Run Quest</th>
                     </tr>
                 </thead>
                 {% for player in cw_playa %}
@@ -120,6 +122,8 @@
                       <td class="text-center">{{ player.username }}</td>
                       <td class="text-center">{{ player.player_class }}</td>
                       <td class="text-center">{{ player.status }}</td> <!-- setting colour depends from status -->
+                      <td class="text-center"><button onclick="questRun()">Run</button></td>
+                      
                   </tr>
                 </tbody>
                 {% endfor %}

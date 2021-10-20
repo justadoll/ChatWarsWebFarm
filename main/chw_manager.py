@@ -2,6 +2,7 @@ from telethon.sync import TelegramClient, events
 from telethon.tl.functions.users import GetFullUserRequest
 from telethon.sessions import StringSession
 
+from main.models import CW_players
 from loguru import logger
 import asyncio
 from emoji import emojize
@@ -29,6 +30,8 @@ castle = emojize("🏰Замок")
 async def client_init(sess_str):
     client = TelegramClient(StringSession(sess_str), 2299164, "c8b6a3a2edaae9f1d98a2c5596457dce")
     #try:
+    #player = CW_players.objects.get(pk=11)
+    #logger.debug(player.username)
     await client.connect()
     return client
 
@@ -47,9 +50,9 @@ async def get_user_data(sessionFromRequest):
     return username
 
 # Game Functions
-async def mainQuestRun(sessionFromRequest,quest_range):
-    client = await client_init(sessionFromRequest)
-    logger.debug(f"[+] someone started!")
+async def mainQuestRun(player_obj,quest_range):
+    client = await client_init(player_obj.session)
+    logger.debug(f"[+] {player_obj.chw_username} started!")
     lvl = await hero_level(client)
     cast_range = AsyncIterator(range(quest_range))
     async for i in cast_range:
@@ -57,7 +60,7 @@ async def mainQuestRun(sessionFromRequest,quest_range):
 
     await asyncio.sleep(3)
     await client.disconnect()
-    logger.debug(f"[-] someone disconnected")
+    logger.debug(f"[-] {player_obj.chw_username} disconnected")
 
 async def quest_auto(cli, lvl):
     """ Function that go client to quiest while have stamina """
@@ -104,12 +107,13 @@ async def quest_auto(cli, lvl):
         return False
 
 # sub funcs TODO Class with init and rename of cli or something else
-async def get_game_time(client):
+async def get_game_time(player_obj):
     """ Check and game time"""
-    if (type(client) == str):
-        client = await client_init(client)
+    if (type(player_obj) == CW_players):
+        client = await client_init(player_obj.session)
     else:
-        logger.debug(type(client))
+        client = player_obj
+        logger.debug(f"Client was inited! His type is: {str(type(client))}!")
     msg = await chw_get_msg(client, castle)
     msg = str(msg[0].message)
     spl = msg.split("\n")

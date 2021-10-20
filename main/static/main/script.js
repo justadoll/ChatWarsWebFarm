@@ -25,6 +25,36 @@ const setNum = (block, num) => {
 	}
 };
 
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+const questRun = () => {
+	console.log("My func!")
+	$("button").hide() //ебать костыль я сам в ахуе
+	const csrftoken = getCookie('csrftoken');
+	$.ajax({
+		type: 'PUT', // Use POST with X-HTTP-Method-Override or directly a PUT if the browser/client supports it
+		dataType: 'json', // If your request format is JSON
+		url: "http://127.0.0.1:8000/main/player/12/", // Your API URL
+		headers: {"X-HTTP-Method-Override": "PUT", 'X-CSRFToken': csrftoken},
+		mode: 'same-origin', // You should override this if you used "POST" early X-HTTP-Method-Override set to PUT
+		data: '{"chw_username": "\ud83e\udd87BatBoy21", "player_class": "New", "status": "Run"}', // The username/userId of the user who clicked the button
+	});
+}
+
 const time = {
 	s: '',
 	m: '',
