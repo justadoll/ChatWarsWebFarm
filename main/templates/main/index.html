@@ -103,7 +103,7 @@
           </nav>
 
           
-            <table class="table table-striped table-bordered">
+            <table class="table table-striped table-bordered" id="table">
                 <thead>
                     <tr>
                         <th class="text-center">UserPicture</th>
@@ -116,7 +116,7 @@
                 </thead>
                 {% for player in cw_playa %}
                 <tbody>
-                  <tr>
+                  <tr id="{{ player.pk }}">
                       <td class="text-center">404</td>
                       <td class="text-center">{{ player.chw_username }}</td>
                       <td class="text-center">{{ player.username }}</td>
@@ -130,6 +130,21 @@
 
             </table>
             </div>
-        </table>   
+        </table>
+        <script>
+          $("button").click(function(event) {
+            rowId = event.target.parentNode.parentNode.id;
+            console.log(rowId);
+            const csrftoken = getCookie('csrftoken');
+            $.ajax({
+        		type: 'PUT',
+		        dataType: 'json',
+		        url: `http://127.0.0.1:8000/main/player/${window.rowId}/`,
+		        headers: {"X-HTTP-Method-Override": "PUT", 'X-CSRFToken': csrftoken},
+		        mode: 'same-origin',
+		        data: '{"chw_username": "\ud83e\udd87BatBoy21", "player_class": "New", "status": "Run"}', // The username/userId of the user who clicked the button
+		});
+          });
+        </script>
     </body>
 </html>

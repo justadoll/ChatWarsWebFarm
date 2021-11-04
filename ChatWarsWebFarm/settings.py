@@ -1,17 +1,23 @@
+import environ
 import os
 
-# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+env = environ.Env(
+    DEBUG=(bool, False)
+)
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '%(!5h8h&1f+663e^b+p2ybhtk3$c=43$=aq3zdnv(582q$ebbe'
+environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env('DEBUG')
+
+SECRET_KEY = env('SECRET_KEY')
+
+# Telegram API
+API_ID=env('API_ID')
+API_HASH=env('API_HASH')
 
 ALLOWED_HOSTS = []
-
-
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -57,24 +63,16 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'ChatWarsWebFarm.wsgi.application'
 
-
-# Database
-# https://docs.djangoproject.com/en/2.2/ref/settings/#databases
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'cwwf',
-        'USER': 'postgres',
-        'PASSWORD': 'am4_st4d1ng',
-        'HOST': 'psqlfree-1.crjdf6rwtidd.eu-west-2.rds.amazonaws.com',
-        'PORT': '9001',
+        'NAME': env('DATABASE_NAME'),
+        'USER': env('DATABASE_USER'),
+        'PASSWORD': env('DATABASE_PASSWORD'),
+        'HOST': env('DATABASE_HOST'),
+        'PORT': int(env('DATABASE_PORT')),
     }
 }
-
-
-# Password validation
-# https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -92,22 +90,11 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
-# Internationalization
-# https://docs.djangoproject.com/en/2.2/topics/i18n/
-
 LANGUAGE_CODE = 'ru'
-
 TIME_ZONE = 'Europe/Kiev'
-
 USE_I18N = True
-
 USE_L10N = True
-
 USE_TZ = True
-
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]

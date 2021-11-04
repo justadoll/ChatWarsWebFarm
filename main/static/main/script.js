@@ -41,18 +41,30 @@ function getCookie(name) {
     return cookieValue;
 }
 
+
+/*	
+	Get all ids:
+	var t = document.getElementById("table"),
+    d = t.getElementsByTagName("tr")[1],
+    r = d.getElementsByTagName("td")[0];
+	console.log(r.innerText);
+	
+}
+*/
+
 const questRun = () => {
-	console.log("My func!")
-	$("button").hide() //ебать костыль я сам в ахуе
-	const csrftoken = getCookie('csrftoken');
+		//const csrftoken = getCookie('csrftoken');
+		/*
 	$.ajax({
-		type: 'PUT', // Use POST with X-HTTP-Method-Override or directly a PUT if the browser/client supports it
-		dataType: 'json', // If your request format is JSON
-		url: "http://127.0.0.1:8000/main/player/12/", // Your API URL
+		type: 'PUT',
+		dataType: 'json',
+		url: `http://127.0.0.1:8000/main/player/${window.rowId}/`,
 		headers: {"X-HTTP-Method-Override": "PUT", 'X-CSRFToken': csrftoken},
-		mode: 'same-origin', // You should override this if you used "POST" early X-HTTP-Method-Override set to PUT
+		mode: 'same-origin',
 		data: '{"chw_username": "\ud83e\udd87BatBoy21", "player_class": "New", "status": "Run"}', // The username/userId of the user who clicked the button
-	});
+		});
+		*/
+	//});
 }
 
 const time = {
