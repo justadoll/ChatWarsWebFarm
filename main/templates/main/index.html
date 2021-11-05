@@ -5,14 +5,10 @@
         <title>::Dashboard::</title>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta http-equiv="refresh" content="30">
         <!-- There is a conflict with this 2 csses -->
         <!-- makes is smaller and colorful td's like .info, .error and etc... <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"> -->
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
-        <link href="https://fonts.googleapis.com/css?family=Poppins:200,300,400,600,700,800" rel="stylesheet" />
-        <link href="https://use.fontawesome.com/releases/v5.0.6/css/all.css" rel="stylesheet">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>        
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
         <link rel="stylesheet" href="{% static 'main/style.css'%}">
         <script src={%static 'main/jquery-3.6.0.min.js'%}></script>
 
@@ -104,7 +100,7 @@
 
           
             <table class="table table-striped table-bordered" id="table">
-                <thead>
+                <thead class="thead-dark">
                     <tr>
                         <th class="text-center">UserPicture</th>
                         <th class="text-center">Player Name</th>
@@ -116,13 +112,19 @@
                 </thead>
                 {% for player in cw_playa %}
                 <tbody>
-                  <tr id="{{ player.pk }}">
-                      <td class="text-center">404</td>
-                      <td class="text-center">{{ player.chw_username }}</td>
-                      <td class="text-center">{{ player.username }}</td>
-                      <td class="text-center">{{ player.player_class }}</td>
-                      <td class="text-center">{{ player.status }}</td> <!-- setting colour depends from status -->
-                      <td class="text-center"><button onclick="questRun()">Run</button></td>
+                  {% if player.status == "🛌Sleep" %}
+                    {% with player.status as s %}
+                      <tr class="table-primary" id="{{ player.pk }}">
+                    {% endwith  %}
+                  {% else %}
+                    <tr class="table-danger" id="{{ player.pk }}">
+                  {% endif %}
+                        <td class="text-center">404</td>
+                        <td class="text-center">{{ player.chw_username }}</td>
+                        <td class="text-center">{{ player.username }}</td>
+                        <td class="text-center">{{ player.player_class }}</td>
+                        <td class="text-center">{{ player.status }}</td> <!-- setting colour depends from status -->
+                        <td class="text-center"><button onclick="questRun()">Run</button></td>
                       
                   </tr>
                 </tbody>
@@ -135,6 +137,7 @@
           $("button").click(function(event) {
             rowId = event.target.parentNode.parentNode.id;
             console.log(rowId);
+            /*
             const csrftoken = getCookie('csrftoken');
             $.ajax({
         		type: 'PUT',
@@ -143,8 +146,14 @@
 		        headers: {"X-HTTP-Method-Override": "PUT", 'X-CSRFToken': csrftoken},
 		        mode: 'same-origin',
 		        data: '{"chw_username": "\ud83e\udd87BatBoy21", "player_class": "New", "status": "Run"}', // The username/userId of the user who clicked the button
-		});
+		});   localStorage.setItem('myCat', 'Tom');
+          let cat = localStorage.getItem('myCat');
+          console.log(cat);
+          localStorage.clear();
+          alert("Starting run a quest");
+          */
           });
+          
         </script>
     </body>
 </html>

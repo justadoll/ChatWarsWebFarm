@@ -25,9 +25,11 @@ def chw_manager(action, id):
         logger.debug(async_result)
         loop.close()
     elif action == "quest_run":
-        async_result = loop.run_until_complete(chw_master.mainQuestRun(player,6))
+        async_result = loop.run_until_complete(chw_master.mainQuestRun(player))
         logger.debug(async_result)
         loop.close()
+        player.status="🛌Sleep"
+        player.save()
     elif action == "get_game_time":
         async_result = loop.run_until_complete(chw_master.get_game_time(player))
         loop.close()
@@ -63,20 +65,28 @@ def indiv_player(request,pk):
 
     elif request.method == "PUT":
         data = JSONParser().parse(request)
-        serializer = PlayerSerializer(player, data=data, fields=('id','chw_username','username','status'))
-        if serializer.is_valid():
-            serializer.save()
-            for test in serializer:
-                if test.value == "Run":
-                    #logger.debug("Run, forest, run!")
-                    #chw_manager("quest_run", player.pk)
-                    #logger.info(chw_manager("get_game_time", player.pk))
-                    logger.info(chw_manager("get_user_data", player.pk))
+        logger.debug(data)
+        if(player.status=="Run"):
+            logger.debug("Already run!")
+            return JsonResponse({"response":"Player already run!"}, status=208)
+        else:
+            serializer = PlayerSerializer(player, data=data, fields=('id','chw_username','username','status'))
+            if serializer.is_valid():
+                serializer.save()
+                #dct_data = serializer.data.__dict__
+                #logger.debug(dct_data['serializer'].data['status']) get status from serializer
+                for test in serializer:
+                    if test.value == "Run":
+                        logger.debug("Run, forest, run!")
+                        #chw_manager("quest_run", player.pk)
 
-                    return JsonResponse(serializer.data)
-                else:
-                    pass
-            return JsonResponse({"response":"Something gone wrong"}, status=401)
+                        #logger.info(chw_manager("get_game_time", player.pk))
+                        #logger.info(chw_manager("get_user_data", player.pk))
+
+                        return JsonResponse(serializer.data)
+                    else:
+                        pass
+                return JsonResponse({"response":"Something gone wrong"}, status=401)
         return JsonResponse(serializer.errors, status=400)
 
 

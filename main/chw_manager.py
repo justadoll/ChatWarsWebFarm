@@ -71,61 +71,61 @@ class ChwMaster():
         return username
 
     # Game Functions
-    async def mainQuestRun(self, player_obj, quest_range):
+    async def drink_poison(self,client, p_name):
+        for i in self.quest_poisons[p_name]:
+            for x in i:
+                await client.send_message("ChatWarsBot", (i[x])) # /use_p0*
+                logger.debug(f"Trying to drink poison {i[x]}")
+                await asyncio.sleep(1)
+
+    async def mainQuestRun(self, player_obj):
         client = await self.client_init(player_obj.session)
         logger.debug(f"[+] {player_obj.chw_username} started!")
-        lvl = await self.hero_level(client)
-        cast_range = AsyncIterator(range(quest_range))
+        stam = await self.hero_stamina(client)
+        logger.debug(f"{player_obj.chw_username} {stam=}")
+        lvl = await self.hero_level(client) #if lvl < 20: btn=0
+        cast_range = AsyncIterator(range(stam))
+
+        #await self.drink_poison(client, "Nature")
+        #await self.drink_poison(client, "Greed")
+        
         async for i in cast_range:
-            await self.quest_auto(client, lvl)
+            await self.quest_auto(cli=client, lvl=lvl, button=0)
 
         await asyncio.sleep(3)
         await client.disconnect()
         logger.debug(f"[-] {player_obj.chw_username} disconnected")
 
-    async def quest_auto(self, cli, lvl):
+    async def quest_auto(self, cli, lvl, button):
         """ Function that go client to quiest while have stamina """
         info = await cli(GetFullUserRequest('me'))
-        stam = await self.hero_stamina(cli)
-        logger.debug("Stamina: "+str(stam))
-        if stam > 0:
-            logger.info(f"{info.user.username} have stamina, have we go!")
-            await cli.send_message("ChatWarsBot", self.quests)
-            await asyncio.sleep(1)
-            msg1 = await cli.get_messages("ChatWarsBot")
-            if lvl >= 20:
-                button = await self.get_game_time(cli)
-            #elif lvl >= 20 and is_knight
-            elif lvl < 20:
-                logger.debug("LowLevel: Forest!")
-                button = 0
+        #logger.debug(f"{info.user.username=} -> {cli=} -> {lvl=} -> {button=}")
+        await cli.send_message("ChatWarsBot", self.quests)
+        await asyncio.sleep(1)
+        msg1 = await cli.get_messages("ChatWarsBot")
 
-            if await msg1[0].click(button) == None:
-                logger.error("Click failed")
-                await self.quest_auto(cli,lvl)
-            else:
-                await asyncio.sleep(1)
-                msg_time = await cli.get_messages("ChatWarsBot")
-                #logger.debug("Message:"+msg_time[0].message)
-                msg_time = re.findall("\d+", str(msg_time[0].text))
-                try:
-                    msg_time = str(msg_time[0])
-                    msg_time = int(msg_time)
-                    msg_time *= 60
-                    logger.info("Time in quest: "+str(msg_time))
-                    msg_time += 20
-                    await asyncio.sleep(msg_time)
-                    return True
-                except Exception:
-                    logger.error("Something gone wrong!")
-
+        if await msg1[0].click(button) == None:
+            logger.error("Click failed")
+            await self.quest_auto(cli,lvl)
         else:
-            await asyncio.sleep(3)
-            logger.debug("No stamina! Return False")
+            await asyncio.sleep(1)
+            msg_time = await cli.get_messages("ChatWarsBot")
+                #logger.debug("Message:"+msg_time[0].message)
+            msg_time = re.findall("\d+", str(msg_time[0].text))
+            try:
+                msg_time = str(msg_time[0])
+                msg_time = int(msg_time)
+                msg_time *= 60
+                logger.info(f"{info.user.username} time in quest: {msg_time}")
+                msg_time += 10
+                await asyncio.sleep(msg_time)
+                return True
+            except Exception as e:
+                logger.error(f"Something gone wrong!\n {e}")
             #await cli.send_message("ChatWarsBot", defence)
             #return None?
             #await asyncio.sleep(3)
-            return False
+        return False
 
     # sub funcs TODO Class with init and rename of cli or something else
     async def get_game_time(self, player_obj):
