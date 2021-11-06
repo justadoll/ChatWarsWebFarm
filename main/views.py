@@ -14,7 +14,7 @@ from channels.db import database_sync_to_async
 
 chw_master = ChwMaster(api_id=settings.API_ID, api_hash=settings.API_HASH)
 
-def chw_manager(action, id):
+def chw_manager(action, id, button):
     # TODO: mathces for `action` from python3.10?
     # https://stackoverflow.com/questions/62390314/how-to-call-asynchronous-function-in-django
     player = CW_players.objects.get(pk=id)
@@ -25,7 +25,7 @@ def chw_manager(action, id):
         logger.debug(async_result)
         loop.close()
     elif action == "quest_run":
-        async_result = loop.run_until_complete(chw_master.mainQuestRun(player))
+        async_result = loop.run_until_complete(chw_master.mainQuestRun(player, button))
         logger.debug(async_result)
         loop.close()
         player.status="🛌Sleep"
@@ -65,20 +65,23 @@ def indiv_player(request,pk):
 
     elif request.method == "PUT":
         data = JSONParser().parse(request)
-        logger.debug(data)
+        button2int = {"forest": 0, "swamp": 1, "mount": 2, "cow": 3}
+        str_button = data['quest']
+        logger.debug(f"{button2int[str_button]=}")
         if(player.status=="Run"):
             logger.debug("Already run!")
             return JsonResponse({"response":"Player already run!"}, status=208)
         else:
-            serializer = PlayerSerializer(player, data=data, fields=('id','chw_username','username','status'))
+            serializer = PlayerSerializer(player, data=data, fields=('id','status'))
             if serializer.is_valid():
                 serializer.save()
                 #dct_data = serializer.data.__dict__
-                #logger.debug(dct_data['serializer'].data['status']) get status from serializer
+                #user_data_request = dct_data['serializer'].data # geting data from user request with valid fields
+                #logger.debug(user_data_request)
                 for test in serializer:
                     if test.value == "Run":
                         logger.debug("Run, forest, run!")
-                        #chw_manager("quest_run", player.pk)
+                        chw_manager("quest_run", player.pk, button2int[str_button])
 
                         #logger.info(chw_manager("get_game_time", player.pk))
                         #logger.info(chw_manager("get_user_data", player.pk))

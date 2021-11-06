@@ -52,19 +52,19 @@ function getCookie(name) {
 }
 */
 
-const questRun = () => {
-		//const csrftoken = getCookie('csrftoken');
-		/*
+const questRun = (id, quest) => {
+	const csrftoken = getCookie('csrftoken');
+	console.log(id);
 	$.ajax({
 		type: 'PUT',
 		dataType: 'json',
-		url: `http://127.0.0.1:8000/main/player/${window.rowId}/`,
+		url: `http://127.0.0.1:8000/main/player/${id}/`,
 		headers: {"X-HTTP-Method-Override": "PUT", 'X-CSRFToken': csrftoken},
 		mode: 'same-origin',
-		data: '{"chw_username": "\ud83e\udd87BatBoy21", "player_class": "New", "status": "Run"}', // The username/userId of the user who clicked the button
-		});
-		*/
-	//});
+		data: `{"status": "Run", "quest": "${quest}"}`, // The username/userId of the user who clicked the button
+});
+	alert(`Starting run a quest: ${quest}`);
+	window.location.reload(false); 
 }
 
 const time = {

@@ -11,6 +11,8 @@
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
         <link rel="stylesheet" href="{% static 'main/style.css'%}">
         <script src={%static 'main/jquery-3.6.0.min.js'%}></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 
     </head>
     
@@ -113,18 +115,27 @@
                 {% for player in cw_playa %}
                 <tbody>
                   {% if player.status == "🛌Sleep" %}
-                    {% with player.status as s %}
-                      <tr class="table-primary" id="{{ player.pk }}">
-                    {% endwith  %}
+                      <tr class="table-active" id="{{ player.pk }}">
                   {% else %}
-                    <tr class="table-danger" id="{{ player.pk }}">
+                    <tr class="bg-success" id="{{ player.pk }}">
                   {% endif %}
                         <td class="text-center">404</td>
                         <td class="text-center">{{ player.chw_username }}</td>
                         <td class="text-center">{{ player.username }}</td>
                         <td class="text-center">{{ player.player_class }}</td>
                         <td class="text-center">{{ player.status }}</td> <!-- setting colour depends from status -->
-                        <td class="text-center"><button onclick="questRun()">Run</button></td>
+                        <td class="text-center">
+                          <div class="dropdown">
+                            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                              Place to go
+                            </button>
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
+                              <button class="dropdown-item forest" type="button">🌲Лес</button>
+                              <button class="dropdown-item swamp" type="button">🍄Болото</button>
+                              <button class="dropdown-item mount" type="button">⛰Долина</button>
+                              <button class="dropdown-item cow" type="button">🗡Корованы</button>
+                            </div>
+                          </div>
                       
                   </tr>
                 </tbody>
@@ -133,27 +144,27 @@
             </table>
             </div>
         </table>
+        
         <script>
-          $("button").click(function(event) {
-            rowId = event.target.parentNode.parentNode.id;
-            console.log(rowId);
-            /*
-            const csrftoken = getCookie('csrftoken');
-            $.ajax({
-        		type: 'PUT',
-		        dataType: 'json',
-		        url: `http://127.0.0.1:8000/main/player/${window.rowId}/`,
-		        headers: {"X-HTTP-Method-Override": "PUT", 'X-CSRFToken': csrftoken},
-		        mode: 'same-origin',
-		        data: '{"chw_username": "\ud83e\udd87BatBoy21", "player_class": "New", "status": "Run"}', // The username/userId of the user who clicked the button
-		});   localStorage.setItem('myCat', 'Tom');
-          let cat = localStorage.getItem('myCat');
-          console.log(cat);
-          localStorage.clear();
-          alert("Starting run a quest");
-          */
+          $("button.forest").click(function(event) {
+            rw_id = event.target.parentNode.parentNode.parentNode.parentNode.id;
+            questRun(rw_id,'forest');
           });
           
+          $("button.swamp").click(function(event) {
+            rw_id = event.target.parentNode.parentNode.parentNode.parentNode.id;
+            questRun(rw_id,'swamp');
+          });
+          
+          $("button.mount").click(function(event) {
+            rw_id = event.target.parentNode.parentNode.parentNode.parentNode.id;
+            questRun(rw_id, 'mount');
+          });
+
+          $("button.cow").click(function(event) {
+            rw_id = event.target.parentNode.parentNode.parentNode.parentNode.id;
+            questRun(rw_id,'cow');
+          });
         </script>
     </body>
 </html>

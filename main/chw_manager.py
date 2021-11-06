@@ -78,19 +78,22 @@ class ChwMaster():
                 logger.debug(f"Trying to drink poison {i[x]}")
                 await asyncio.sleep(1)
 
-    async def mainQuestRun(self, player_obj):
+    async def mainQuestRun(self, player_obj, button):
         client = await self.client_init(player_obj.session)
         logger.debug(f"[+] {player_obj.chw_username} started!")
         stam = await self.hero_stamina(client)
         logger.debug(f"{player_obj.chw_username} {stam=}")
+        if button == 3:
+            stam = stam//2
+            logger.debug(f"Cow button detected -> devined stamina = {stam}")
         lvl = await self.hero_level(client) #if lvl < 20: btn=0
         cast_range = AsyncIterator(range(stam))
 
-        #await self.drink_poison(client, "Nature")
-        #await self.drink_poison(client, "Greed")
-        
+        await self.drink_poison(client, "Nature")
+        await self.drink_poison(client, "Greed")
+
         async for i in cast_range:
-            await self.quest_auto(cli=client, lvl=lvl, button=0)
+            await self.quest_auto(cli=client, lvl=lvl, button=button)
 
         await asyncio.sleep(3)
         await client.disconnect()
@@ -118,6 +121,8 @@ class ChwMaster():
                 msg_time *= 60
                 logger.info(f"{info.user.username} time in quest: {msg_time}")
                 msg_time += 10
+                if button==3:
+                    msg_time += 190
                 await asyncio.sleep(msg_time)
                 return True
             except Exception as e:
