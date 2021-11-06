@@ -1,11 +1,14 @@
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
+from django.views.generic.edit import CreateView
 from django.conf import settings
+from django.urls import reverse_lazy
 from rest_framework.decorators import api_view
 from rest_framework.parsers import JSONParser
 
 from .models import CW_players
 from .serializers import PlayerSerializer
+from .forms import ChwForm
 from loguru import logger
 
 from .chw_manager import ChwMaster
@@ -96,3 +99,21 @@ def indiv_player(request,pk):
 def index(request):
     cw_playa = CW_players.objects.order_by('-registration_date')
     return render(request,'main/index.html', {'cw_playa':cw_playa})
+
+class ChwCreateView(CreateView):
+    template_name = 'main/create.html'
+    form_class = ChwForm
+    success_url = reverse_lazy('main')
+
+    def get_context_data(self, **kwargs):
+        return super().get_context_data(**kwargs)
+
+@api_view(['POST'])
+def send_phone_request(request):
+    if request.method == 'POST':
+        try:
+            data = JSONParser().parse(request)
+            logger.debug(data)
+            return JsonResponse({"status":"send"}, status=200)
+        except Exception as e:
+            return JsonResponse({"status":"something gone wrong"}, status=400)

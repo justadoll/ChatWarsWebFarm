@@ -21,7 +21,7 @@ class AsyncIterator:
         except StopIteration:
             raise StopAsyncIteration
 
-# Telethon funcions
+# Game funcions
 class ChwMaster():
     def __init__(self, api_id, api_hash):
         """ Initilize service """
@@ -70,7 +70,7 @@ class ChwMaster():
         await client.disconnect()
         return username
 
-    # Game Functions
+    # Chw Functions
     async def drink_poison(self,client, p_name):
         for i in self.quest_poisons[p_name]:
             for x in i:
@@ -171,3 +171,12 @@ class ChwMaster():
         stamina = re.findall("\d", stamina[0])
         stamina = int(stamina[0])
         return stamina
+
+
+class TelethonAuth():
+    def __init__(self, api_id, api_hash):
+        self.api_id = api_id
+        self.api_hash = api_hash
+    
+    async def hz(phone):
+        logger.debug(phone)
