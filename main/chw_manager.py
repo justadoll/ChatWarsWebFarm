@@ -40,15 +40,10 @@ class ChwMaster():
         self.battle_poisons = {"Rage":[{"VOR":"/use_p01"},{"POR":"/use_p02"}, {"BOR":"/use_p03"}],
                 "Peace":[{"VOP":"/use_p04"},{"POP":"/use_p05"},{"BOP":"/use_p06"}]
                 }
-        #for i in d['Rage']:
-        #    for x in i:
-        #        print(i[x]) => /use_p0*
 
     async def client_init(self, sess_str):
         client = TelegramClient(StringSession(sess_str), self.api_id, self.api_hash)
         #try:
-        #player = CW_players.objects.get(pk=11)
-        #logger.debug(player.username)
         await client.connect()
         return client
 
@@ -109,7 +104,7 @@ class ChwMaster():
 
         if await msg1[0].click(button) == None:
             logger.error("Click failed")
-            await self.quest_auto(cli,lvl)
+            await self.quest_auto(cli, lvl, button)
         else:
             await asyncio.sleep(1)
             msg_time = await cli.get_messages("ChatWarsBot")
@@ -168,7 +163,7 @@ class ChwMaster():
         msg = await self.chw_get_msg(client,self.hero)
         msg = str(msg[0].message)
         stamina = re.findall("Выносливость: \d+\/\d+", msg)
-        stamina = re.findall("\d", stamina[0])
+        stamina = re.findall("\d+", stamina[0])
         stamina = int(stamina[0])
         return stamina
 
@@ -177,6 +172,3 @@ class TelethonAuth():
     def __init__(self, api_id, api_hash):
         self.api_id = api_id
         self.api_hash = api_hash
-    
-    async def hz(phone):
-        logger.debug(phone)
