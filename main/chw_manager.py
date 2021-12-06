@@ -65,6 +65,28 @@ class ChwMaster():
         await client.disconnect()
         return username
 
+    async def get_player_info(self, player_obj):
+        results = {}
+        client = await self.client_init(player_obj.session)
+        res = await self.chw_get_msg(client, self.hero)
+        full_msg = res[0].message
+        if "🌟Поздравляем! Новый уровень!🌟" in full_msg:
+            logger.debug("LVLUP!")
+            results["lvlup"] = True
+        rd = re.findall("Уровень: \d+", full_msg)
+        lvl = int(re.findall("\d+",rd[0])[0])
+        results['lvl'] = lvl
+
+        state = re.findall('Состояние:\n[🛌🛡⚔🔎🐫📯🌲🍄⛰]+[a-zА-Я]?.+',full_msg)
+        if state:
+            state = state[0].split(':')[-1][1:] #geting splited : and send withoun \n
+            results['status'] = state
+        else:
+            results['status'] = "hz"
+        #TODO get gold count
+        await client.disconnect()
+        return results
+
     # Chw Functions
     async def drink_poison(self,client, p_name):
         for i in self.quest_poisons[p_name]:
@@ -121,7 +143,10 @@ class ChwMaster():
                 await asyncio.sleep(msg_time)
                 return True
             except Exception as e:
+                #Битва близко. Сейчас не до приключений.
+                #Ты сейчас занят другим приключением. Попробуй позже.
                 logger.error(f"Something gone wrong!\n {e}")
+                return False
             #await cli.send_message("ChatWarsBot", defence)
             #return None?
             #await asyncio.sleep(3)

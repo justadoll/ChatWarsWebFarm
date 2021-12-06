@@ -58,7 +58,7 @@ const questRun = (id, quest) => {
 	$.ajax({
 		type: 'PUT',
 		dataType: 'json',
-		url: `http://127.0.0.1:8000/main/player/${id}/`,
+		url: `http://10.64.47.2:8080/main/player/${id}/`,
 		headers: {"X-HTTP-Method-Override": "PUT", 'X-CSRFToken': csrftoken},
 		mode: 'same-origin',
 		data: `{"status": "Run", "quest": "${quest}"}`, // The username/userId of the user who clicked the button

@@ -17,7 +17,7 @@ from channels.db import database_sync_to_async
 
 chw_master = ChwMaster(api_id=settings.API_ID, api_hash=settings.API_HASH)
 
-def chw_manager(action, id, button):
+def chw_manager(action, id, button=None):
     # TODO: mathces for `action` from python3.10?
     # https://stackoverflow.com/questions/62390314/how-to-call-asynchronous-function-in-django
     player = CW_players.objects.get(pk=id)
@@ -33,6 +33,10 @@ def chw_manager(action, id, button):
         loop.close()
         player.status="🛌Sleep"
         player.save()
+    elif action == "get_info":
+        async_result = loop.run_until_complete(chw_master.get_player_info(player))
+        loop.close()
+        return async_result
     elif action == "get_game_time":
         async_result = loop.run_until_complete(chw_master.get_game_time(player))
         loop.close()
@@ -64,7 +68,13 @@ def indiv_player(request,pk):
 
     if request.method == "GET":
         serializer = PlayerSerializer(player,fields=('id','chw_username','username','status','player_class'))
-        return JsonResponse(serializer.data)
+        updated_data = chw_manager("get_info", player.pk)
+        lvl = updated_data['lvl']
+        player.lvl = lvl
+        player.save()
+        context = {'id':serializer.data['id'], 'username':serializer.data['chw_username'], 'status':updated_data['status'], 'class':serializer.data['player_class'],'lvl':lvl,'lvlup':updated_data['lvlup']}
+        return render(request, 'main/player.html', context)
+        #return JsonResponse(serializer.data)
 
     elif request.method == "PUT":
         data = JSONParser().parse(request)

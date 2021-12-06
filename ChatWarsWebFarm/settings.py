@@ -17,7 +17,7 @@ SECRET_KEY = env('SECRET_KEY')
 API_ID=env('API_ID')
 API_HASH=env('API_HASH')
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['10.64.47.2']
 
 INSTALLED_APPS = [
     'django.contrib.admin',

@@ -7,6 +7,7 @@ class CW_players(models.Model):
     session=models.CharField(max_length=355)
     status=models.CharField(max_length=50)
     player_class=models.CharField(max_length=10)
+    lvl = models.IntegerField(blank=True,null=True)
     send_report=models.CharField(max_length=32,blank=True)
     registration_date=models.DateTimeField(auto_now_add=True,db_index=True)
 

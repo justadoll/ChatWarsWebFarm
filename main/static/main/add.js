@@ -14,7 +14,7 @@ const send_code = () => {
             // send_code by number via api
     }   catch (TypeError) {
             alert("Invalid phone number!")
-            window.location.reload(false); 
+            //window.location.reload(false); 
     }
     }
     

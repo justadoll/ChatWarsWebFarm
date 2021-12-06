@@ -1,25 +1,28 @@
 import aiohttp, asyncio, json, aioschedule
-import datetime as dt
+from loguru import logger
+
+logger.add("autorun_logs.json", format="{time} {level} {message}", level="INFO", rotation="5 MB", compression="zip", serialize=True)
 
 class SheduledQuestAPI():
     async def go_quest(self, player_id, place):
-        url = f"http://127.0.0.1:8000/main/player/{player_id}/"
-        print(url)
+        logger.info(f"{player_id} started quest {place}")
+        url = f"http://10.64.47.2:8080/main/player/{player_id}/"
         h = {"Accept": "application/json"}
         j = {"status": "Run", "quest": place}
         async with aiohttp.ClientSession() as session:
             async with session.put(url, headers=h, json=j) as resp:
                 r = await resp.text()
-        return json.loads(r)
 
     async def scheduler(self):
-        aioschedule.every().day.at("00:25").do(self.go_quest, 14,"cow")
+        aioschedule.every().day.at("06:00").do(self.go_quest, 12,"forest")
+        aioschedule.every().day.at("06:00").do(self.go_quest, 13,"swamp")
         while True:
             await aioschedule.run_pending()
             await asyncio.sleep(1)
 
 async def main():
     sqa = SheduledQuestAPI()
+    print("Started handler!")
     await asyncio.create_task(sqa.scheduler())
 
 

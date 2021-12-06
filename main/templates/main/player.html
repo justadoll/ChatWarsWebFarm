@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Player {{ id }}</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+
+<body>
+	<p>Name: {{ username }}</p>
+	<p>Class: {{ class }}</p>
+	<p>Status: {{ status }}</p></br>
+	<p>LVL: {{ lvl }}</p>
+	{% if lvlup %}<p>Hero have points for upgrading skills!</p>{% endif %}
+</body>
+
+</html>
