@@ -1,35 +1,15 @@
-{% load staticfiles %}
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>::Registrate User::</title>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-        <script src={%static 'main/jquery-3.6.0.min.js'%}></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-        <script  src="{% static 'main/add.js' %}"></script>
-    </head>
-
-    <body>
-        <h3>Добавляем нового игрока</h3>
-        <div>
-        <a href="{% url 'main' %}">Main Page</a>
-        </div>
-            <form method="post">
-                {% csrf_token %}
-                {{ form.as_p }}
-                <button type="button" class="send-code" onclick="send_code()">Send Code</button>
-                <input type="hidden" id="reg-acc" value="Разегестрировать аккаунт">
-                </form>
-    </body>
-    <!--
-    <script type="text/javascript" language="javascript">
- 
-        $("button.send-code").click(function(event){
-            alert("Code was sent by this number!");
-            $("form.input").show();
-        });
-    </script>
-    -->
-</html>
+{% extends "main/base.html" %}
+{% load static %}
+{% block title %}::Registrate User::{% endblock %}
+    {% block content %}
+        <h3 class="info-header" style="text-align:center;">Добавляем нового игрока</h3>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="button" class="send-code" onclick="send_code()">Send Code</button>
+            <input type="hidden" id="input-code" maxlength="6" placeholder="Code">
+            <input type="hidden" id="reg-acc" value="Разегестрировать аккаунт">
+            </form>
+    
+    <script src="{% static 'main/add.js' %}"></script>
+    {% endblock content %}

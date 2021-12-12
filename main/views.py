@@ -53,6 +53,8 @@ def players_list(request):
 
     elif request.method == 'POST':
         data = JSONParser().parse(request)
+        logger.debug("POST REQUEST TO CREATE ACCOUNT!")
+        logger.debug(f"{data=}")
         serializer = PlayerSerializer(data=data)
         if serializer.is_valid():
             serializer.save()

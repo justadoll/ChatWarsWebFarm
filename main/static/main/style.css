@@ -122,3 +122,67 @@ input:focus + .slider {
 input:checked + .slider:before {
   transform: translateX(26px);
 }
+
+.info-header {
+  color: #867979;
+}
+
+#id_username {
+  display: block;
+  margin-right: auto;
+  margin-left: auto;
+}
+#id_phone_number {
+  display: block;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+label[for=id_username] {
+  color: #d9d9d9;
+  display: block;
+  text-align: center;
+  line-height: 150%;
+  font-size: .85em;
+}
+label[for=id_phone_number] {
+  color: #d9d9d9;
+  display: block;
+  text-align: center;
+  line-height: 150%;
+  font-size: .85em;
+}
+
+.send-code{
+  background-color: grey;
+  display: block;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+#input-code {
+  background-color: grey;
+  text-align: center;
+  display: block;
+  margin-right: auto;
+  margin-left: auto;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+#input-code:focus {
+  color: white;
+  background-color: rgb(99, 12, 55);
+}
+
+#reg-acc {
+  background-color: grey;
+  display: block;
+  margin-right: auto;
+  margin-left: auto;
+  }
+
+p {
+  color: white;
+  text-align: center;
+}

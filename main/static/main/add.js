@@ -10,6 +10,7 @@ const send_code = () => {
         rexp_result = phone_input.match(phone_exp);
         try {
             console.log(rexp_result[0]);
+            document.getElementById("input-code").type = "text"
             document.getElementById("reg-acc").type = "submit";
             // send_code by number via api
     }   catch (TypeError) {
