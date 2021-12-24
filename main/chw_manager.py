@@ -73,6 +73,8 @@ class ChwMaster():
         if "🌟Поздравляем! Новый уровень!🌟" in full_msg:
             logger.debug("LVLUP!")
             results["lvlup"] = True
+        else:
+            results["lvlup"] = False
         rd = re.findall("Уровень: \d+", full_msg)
         lvl = int(re.findall("\d+",rd[0])[0])
         results['lvl'] = lvl
@@ -86,6 +88,12 @@ class ChwMaster():
         #TODO get gold count
         await client.disconnect()
         return results
+
+    async def chat_shell(self,player_obj,command):
+        client = await self.client_init(player_obj.session)
+        res = await self.chw_get_msg(client, command)
+        await client.disconnect()
+        return res[0].message
 
     # Chw Functions
     async def drink_poison(self,client, p_name):

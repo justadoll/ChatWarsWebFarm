@@ -67,6 +67,30 @@ const questRun = (id, quest) => {
 	window.location.reload(false); 
 }
 
+const chat_shell = () => {
+	command = document.getElementById("input-command").value;
+	if (command==null || command=="") {
+		alert("Fill this form if you want to send some command!");
+	}
+	else {
+		console.log(command);
+		const csrftoken = getCookie('csrftoken');
+		$.ajax({
+			type: 'POST',
+			dataType: 'json',
+			url: `command/`,
+			headers: {"X-HTTP-Method-Override": "POST", 'X-CSRFToken': csrftoken},
+			mode: 'same-origin',
+			dataType: "json",
+			data: `{"command":"${command}"}`,
+			success: function (msg, status) {
+				var jsonUpdatedData = msg;
+				console.log(jsonUpdatedData);
+			}
+	});
+	}
+} 
+
 const time = {
 	s: '',
 	m: '',

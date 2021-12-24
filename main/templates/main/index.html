@@ -22,7 +22,7 @@
                     <tr class="bg-success" id="{{ player.pk }}">
                   {% endif %}
                         <td class="text-center">404</td>
-                        <td class="text-center">{{ player.chw_username }}</td>
+                        <td class="text-center"><a href="{% url 'mainapp:player' player.pk %}">{{ player.chw_username }}</a></td> <!-- <a href="player/{{ player.pk }}"> -->
                         <td class="text-center">{{ player.username }}</td>
                         <td class="text-center">{{ player.player_class }}</td>
                         <td class="text-center">{{ player.status }}</td> <!-- setting colour depends from status -->

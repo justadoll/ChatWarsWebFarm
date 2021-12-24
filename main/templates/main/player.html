@@ -8,5 +8,7 @@
 		<p>Status: {{ status }}</p></br>
 		<p>LVL: {{ lvl }}</p>
 		{% if lvlup %}<p>Hero have points for upgrading skills!</p>{% endif %}
+		<input type="text" id="input-command" maxlength="20" placeholder="Command">
+		<button type="submit" class="send_shell_command" onclick="chat_shell()">Submit</button>
 		</div>
 	{% endblock content %}

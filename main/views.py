@@ -17,7 +17,7 @@ from channels.db import database_sync_to_async
 
 chw_master = ChwMaster(api_id=settings.API_ID, api_hash=settings.API_HASH)
 
-def chw_manager(action, id, button=None):
+def chw_manager(action, id, button=None, command=None):
     # TODO: mathces for `action` from python3.10?
     # https://stackoverflow.com/questions/62390314/how-to-call-asynchronous-function-in-django
     player = CW_players.objects.get(pk=id)
@@ -39,6 +39,10 @@ def chw_manager(action, id, button=None):
         return async_result
     elif action == "get_game_time":
         async_result = loop.run_until_complete(chw_master.get_game_time(player))
+        loop.close()
+        return async_result
+    elif action == "chat_shell":
+        async_result = loop.run_until_complete(chw_master.chat_shell(player,command))
         loop.close()
         return async_result
     else:
@@ -107,6 +111,15 @@ def indiv_player(request,pk):
                 return JsonResponse({"response":"Something gone wrong"}, status=401)
         return JsonResponse(serializer.errors, status=400)
 
+@api_view(['POST'])
+def send_command(request, pk:int):
+    logger.debug(f"{pk=}")
+    data = JSONParser().parse(request)
+    logger.debug(f"{data=}")
+    player = CW_players.objects.get(pk=pk)
+    response = chw_manager(action="chat_shell", id=player.pk, command=data['command'])
+    
+    return JsonResponse({"result":response}, status=200)
 
 def index(request):
     cw_playa = CW_players.objects.order_by('-registration_date')
