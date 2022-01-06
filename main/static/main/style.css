@@ -138,26 +138,19 @@ input:checked + .slider:before {
   margin-left: auto;
 }
 
-label[for=id_username] {
+label[for=id_chw_username] {
   color: #d9d9d9;
   display: block;
   text-align: center;
   line-height: 150%;
   font-size: .85em;
 }
-label[for=id_phone_number] {
+label[for=id_session] {
   color: #d9d9d9;
   display: block;
   text-align: center;
   line-height: 150%;
   font-size: .85em;
-}
-
-.send-code{
-  background-color: grey;
-  display: block;
-  margin-right: auto;
-  margin-left: auto;
 }
 
 #input-code {
@@ -181,8 +174,21 @@ label[for=id_phone_number] {
   margin-right: auto;
   margin-left: auto;
   }
-
+#qr-code {
+  text-align: center;
+  display: block;
+  margin-right: auto;
+  margin-left: auto;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
 p {
   color: white;
   text-align: center;
+}
+.send-code {
+  background-color: grey;
+  display: block;
+  margin-right: auto;
+  margin-left: auto;
 }

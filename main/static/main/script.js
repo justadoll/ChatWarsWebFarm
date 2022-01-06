@@ -41,24 +41,13 @@ function getCookie(name) {
     return cookieValue;
 }
 
-
-/*	
-	Get all ids:
-	var t = document.getElementById("table"),
-    d = t.getElementsByTagName("tr")[1],
-    r = d.getElementsByTagName("td")[0];
-	console.log(r.innerText);
-	
-}
-*/
-
 const questRun = (id, quest) => {
 	const csrftoken = getCookie('csrftoken');
 	console.log(id);
 	$.ajax({
 		type: 'PUT',
 		dataType: 'json',
-		url: `http://10.64.47.2:8080/main/player/${id}/`,
+		url: `player/${id}/`,
 		headers: {"X-HTTP-Method-Override": "PUT", 'X-CSRFToken': csrftoken},
 		mode: 'same-origin',
 		data: `{"status": "Run", "quest": "${quest}"}`, // The username/userId of the user who clicked the button
@@ -76,16 +65,18 @@ const chat_shell = () => {
 		console.log(command);
 		const csrftoken = getCookie('csrftoken');
 		$.ajax({
-			type: 'POST',
+			type: 'PUT',
 			dataType: 'json',
 			url: `command/`,
-			headers: {"X-HTTP-Method-Override": "POST", 'X-CSRFToken': csrftoken},
+			headers: {"X-HTTP-Method-Override": "PUT", 'X-CSRFToken': csrftoken},
 			mode: 'same-origin',
 			dataType: "json",
 			data: `{"command":"${command}"}`,
 			success: function (msg, status) {
 				var jsonUpdatedData = msg;
-				console.log(jsonUpdatedData);
+				console.log(jsonUpdatedData['result']);
+				alert(jsonUpdatedData['result'])
+				//$('#shell-out').html('whatever');
 			}
 	});
 	}

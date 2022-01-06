@@ -11,11 +11,15 @@ class SheduledQuestAPI():
         j = {"status": "Run", "quest": place}
         async with aiohttp.ClientSession() as session:
             async with session.put(url, headers=h, json=j) as resp:
-                r = await resp.text()
+                pass
+                #r = await resp.text()
 
     async def scheduler(self):
-        aioschedule.every().day.at("06:00").do(self.go_quest, 12,"forest")
-        aioschedule.every().day.at("06:00").do(self.go_quest, 13,"swamp")
+        aioschedule.every().day.at("06:00").do(self.go_quest, 12,"forest") #NarrowVictory44
+        aioschedule.every().day.at("06:00").do(self.go_quest, 17,"forest") #Maggotta65
+        aioschedule.every().day.at("06:00").do(self.go_quest, 11,"forest") #NarrowVictory44
+        aioschedule.every().day.at("06:00").do(self.go_quest, 19,"swamp") #fr0g1e
+        aioschedule.every().day.at("06:00").do(self.go_quest, 20,"swamp") #kurassh
         while True:
             await aioschedule.run_pending()
             await asyncio.sleep(1)

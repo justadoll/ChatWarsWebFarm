@@ -3,11 +3,11 @@
 {% block title %}::Registrate User::{% endblock %}
     {% block content %}
         <h3 class="info-header" style="text-align:center;">Добавляем нового игрока</h3>
-        <form method="post">
+        <img src="#" id="qr-code">
+        <form method="POST">
             {% csrf_token %}
             {{ form.as_p }}
-            <button type="button" class="send-code" onclick="send_code()">Send Code</button>
-            <input type="hidden" id="input-code" maxlength="6" placeholder="Code">
+            <button type="button" class="send-code" onclick="get_qr()">Update QR</button>
             <input type="hidden" id="reg-acc" value="Разегестрировать аккаунт">
             </form>
     

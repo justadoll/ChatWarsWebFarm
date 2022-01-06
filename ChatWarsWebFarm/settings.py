@@ -1,5 +1,6 @@
 import environ
 import os
+from loguru import logger as LOGGER
 
 env = environ.Env(
     DEBUG=(bool, False)
@@ -16,6 +17,8 @@ SECRET_KEY = env('SECRET_KEY')
 # Telegram API
 API_ID=env('API_ID')
 API_HASH=env('API_HASH')
+QR_LOGIN_TEXT = "tg://login?token=update_me"
+LOGGER.add("logs.json", format="{time} {level} {message}", level="ERROR", rotation="1 MB", compression="zip", serialize=True)
 
 ALLOWED_HOSTS = ['10.64.47.2', '127.0.0.1']
 
@@ -28,6 +31,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'main.apps.MainConfig',
     'rest_framework',
+    'qr_code',
 ]
 
 MIDDLEWARE = [
@@ -100,3 +104,10 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 VENV_PATH = os.path.dirname(BASE_DIR)
 STATIC_ROOT = os.path.join(VENV_PATH, 'static_root')
+
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+CELERY_BROKER_URL = 'redis://localhost:6379'
+CELERY_RESULT_BACKEND = 'redis://localhost:6379'
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TASK_SERIALIZER = 'json'

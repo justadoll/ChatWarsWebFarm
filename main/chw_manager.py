@@ -3,10 +3,12 @@ from telethon.tl.functions.users import GetFullUserRequest
 from telethon.sessions import StringSession
 
 from main.models import CW_players
-from loguru import logger
+from django.conf import settings
 import asyncio
 from emoji import emojize
 import re
+
+logger = settings.LOGGER
 
 class AsyncIterator:
     def __init__(self, seq):
@@ -70,8 +72,26 @@ class ChwMaster():
         client = await self.client_init(player_obj.session)
         res = await self.chw_get_msg(client, self.hero)
         full_msg = res[0].message
+        
+        # scrapping data from hero message to update it in db
+        client_data = await client.get_me()
+        splited_full_msg = full_msg.split("\n")
         if "🌟Поздравляем! Новый уровень!🌟" in full_msg:
-            logger.debug("LVLUP!")
+            if full_msg.startswith("❗"):
+                chw_name = splited_full_msg[7]
+            else:
+                chw_name = splited_full_msg[5]
+
+            full_chw_name = chw_name.split(" ")
+            results["player_username"] = full_chw_name[0]
+            results["player_class"] = full_chw_name[1]
+            if len(full_chw_name) > 3:
+                logger.debug(f"chw username is > 3, {full_chw_name=}")
+                results["player_class"] = full_chw_name[2]
+            
+            results["username"] = client_data.username
+            results["phone"] = client_data.phone
+
             results["lvlup"] = True
         else:
             results["lvlup"] = False
@@ -84,9 +104,9 @@ class ChwMaster():
             state = state[0].split(':')[-1][1:] #geting splited : and send withoun \n
             results['status'] = state
         else:
-            results['status'] = "hz"
-        #TODO get gold count
+            results['status'] = "¯\_(ツ)_/¯"
         await client.disconnect()
+        logger.info(f"{results=}")
         return results
 
     async def chat_shell(self,player_obj,command):
@@ -103,6 +123,15 @@ class ChwMaster():
                 logger.debug(f"Trying to drink poison {i[x]}")
                 await asyncio.sleep(1)
 
+    async def torch(self, client):
+        logger.debug("Crafting tch...")
+        await self.chw_get_msg(client, "/c_tch")
+        logger.debug("Binding...")
+        await self.chw_get_msg(client, "/bind_tch")
+        res = await self.chw_get_msg(client, "/on_tch")
+        msg = str(res[0].message)
+        logger.debug(f"{msg=}")
+
     async def mainQuestRun(self, player_obj, button):
         client = await self.client_init(player_obj.session)
         logger.debug(f"[+] {player_obj.chw_username} started!")
@@ -113,7 +142,8 @@ class ChwMaster():
             logger.debug(f"Cow button detected -> devined stamina = {stam}")
         lvl = await self.hero_level(client) #if lvl < 20: btn=0
         cast_range = AsyncIterator(range(stam))
-
+        
+        await self.torch(client)
         await self.drink_poison(client, "Nature")
         await self.drink_poison(client, "Greed")
 
