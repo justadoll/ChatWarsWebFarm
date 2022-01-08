@@ -1,6 +1,7 @@
-from telethon.sync import TelegramClient, events
+from telethon.sync import TelegramClient
 from telethon.tl.functions.users import GetFullUserRequest
 from telethon.sessions import StringSession
+from telethon.errors.rpcerrorlist import AuthKeyUnregisteredError
 
 from main.models import CW_players
 from django.conf import settings
@@ -45,15 +46,17 @@ class ChwMaster():
 
     async def client_init(self, sess_str):
         client = TelegramClient(StringSession(sess_str), self.api_id, self.api_hash)
-        #try:
         await client.connect()
         return client
 
     async def chw_get_msg(self, client,mode):
-        await client.send_message('ChatWarsBot', mode)
-        await asyncio.sleep(1.5)
-        msg = await client.get_messages("ChatWarsBot")
-        return msg
+        try:
+            await client.send_message('ChatWarsBot', mode)
+            await asyncio.sleep(1.5)
+            msg = await client.get_messages("ChatWarsBot")
+            return msg
+        except AuthKeyUnregisteredError:
+            return
 
     async def get_user_data(self, player_obj):
         if (type(player_obj) == CW_players):
@@ -71,30 +74,37 @@ class ChwMaster():
         results = {}
         client = await self.client_init(player_obj.session)
         res = await self.chw_get_msg(client, self.hero)
+        if not res:
+            logger.error(f"{player_obj.pk}:{player_obj.chw_username} logouted!")
+            return
         full_msg = res[0].message
         
         # scrapping data from hero message to update it in db
         client_data = await client.get_me()
         splited_full_msg = full_msg.split("\n")
         if "🌟Поздравляем! Новый уровень!🌟" in full_msg:
+            results["lvlup"] = True
             if full_msg.startswith("❗"):
                 chw_name = splited_full_msg[7]
             else:
                 chw_name = splited_full_msg[5]
-
-            full_chw_name = chw_name.split(" ")
-            results["player_username"] = full_chw_name[0]
-            results["player_class"] = full_chw_name[1]
-            if len(full_chw_name) > 3:
-                logger.debug(f"chw username is > 3, {full_chw_name=}")
-                results["player_class"] = full_chw_name[2]
-            
-            results["username"] = client_data.username
-            results["phone"] = client_data.phone
-
-            results["lvlup"] = True
         else:
+            if full_msg.startswith("❗"):
+                chw_name = splited_full_msg[4]
+            else:
+                logger.debug(f"{splited_full_msg=}")
             results["lvlup"] = False
+
+        full_chw_name = chw_name.split(" ")
+        results["player_username"] = full_chw_name[0]
+        results["player_class"] = full_chw_name[1]
+        if len(full_chw_name) > 3:
+            logger.debug(f"chw username is > 3, {full_chw_name=}")
+            results["player_class"] = full_chw_name[2]
+            
+        results["username"] = client_data.username
+        results["phone"] = client_data.phone
+
         rd = re.findall("Уровень: \d+", full_msg)
         lvl = int(re.findall("\d+",rd[0])[0])
         results['lvl'] = lvl
@@ -111,9 +121,25 @@ class ChwMaster():
 
     async def chat_shell(self,player_obj,command):
         client = await self.client_init(player_obj.session)
-        res = await self.chw_get_msg(client, command)
+        message = await self.chw_get_msg(client, command)
+        results = {}
+        results["text"] = message[0].message
+        if not message[0].reply_markup:
+            results["buttons"] = ["🏅Герой","🍺Таверна","🎲Играть в кости","🏚Лавка","⚖️Биржа","▶️Быстрый бой"]
+        else:
+            rowlen = len(message[0].reply_markup.rows)
+            try:
+                buttons_array = []
+                for i in range(rowlen):
+                    buttons = message[0].reply_markup.rows[i].buttons
+                    for b in buttons:
+                        buttons_array.append(b.text)
+            except Exception as e:
+                logger.error(f"{e=}")
+            else:
+                results["buttons"] = buttons_array
         await client.disconnect()
-        return res[0].message
+        return results
 
     # Chw Functions
     async def drink_poison(self,client, p_name):
@@ -131,6 +157,56 @@ class ChwMaster():
         res = await self.chw_get_msg(client, "/on_tch")
         msg = str(res[0].message)
         logger.debug(f"{msg=}")
+
+    async def status(self, players_list):
+        results = {}
+        for player in players_list:
+            client = await self.client_init(player.session)
+            message = await self.chw_get_msg(client=client, mode=self.hero)
+            message = message[0].message
+            restatus = re.findall(r"Состояние:\n.+", message)
+            restamina = re.findall("Выносливость: \d+\/\d+", message)
+            regold_and_pogs = re.findall("💰[-+]?\d+ 👝\d+ 💎\d+",message)
+            regold_and_sapf = re.findall("💰[-+]?\d+ 💎\d+",message)
+            results[player.chw_username] = {"status":self.check_result(restatus), "stamina":self.check_result(restamina), "gold_n_pogs":self.check_result(regold_and_pogs), "gold_n_sapf":self.check_result(regold_and_sapf)}
+            await client.disconnect()
+        return results
+    
+    def check_result(self, val):
+        if val:
+            return val[0]
+    async def command(self, players_list, command):
+        results = {}
+        for player in players_list:
+            client = await self.client_init(player.session)
+            response = await self.chw_get_msg(client=client, mode=command)
+            results[player.chw_username] = response[0].message
+        return results
+
+    async def atack(self, players_list, target):
+        results = []
+        for player in players_list:
+            client = await self.client_init(player.session)
+            await self.chw_get_msg(client=client, mode="⚔Атака")
+            response = await self.chw_get_msg(client=client, mode=target)
+            if response[0].message.startswith("Ты приготовился к атаке"):
+                results.append({player.chw_username:"✅"})
+            else:
+                results.append({player.chw_username:"⛔️"})
+            await client.disconnect()
+        return results
+
+    async def defc(self, players_list):
+        results = []
+        for player in players_list:
+            client = await self.client_init(player.session)
+            response = await self.chw_get_msg(client=client, mode="🛡Защита")
+            if response[0].message.startswith("Ты приготовился к защите"):
+                results.append({player.chw_username:"✅"})
+            else:
+                results.append({player.chw_username:"⛔️"})
+            await client.disconnect()
+        return results
 
     async def mainQuestRun(self, player_obj, button):
         client = await self.client_init(player_obj.session)

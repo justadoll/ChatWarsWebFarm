@@ -62,25 +62,61 @@ const chat_shell = () => {
 		alert("Fill this form if you want to send some command!");
 	}
 	else {
-		console.log(command);
-		const csrftoken = getCookie('csrftoken');
-		$.ajax({
-			type: 'PUT',
-			dataType: 'json',
-			url: `command/`,
-			headers: {"X-HTTP-Method-Override": "PUT", 'X-CSRFToken': csrftoken},
-			mode: 'same-origin',
-			dataType: "json",
-			data: `{"command":"${command}"}`,
-			success: function (msg, status) {
-				var jsonUpdatedData = msg;
-				console.log(jsonUpdatedData['result']);
-				alert(jsonUpdatedData['result'])
-				//$('#shell-out').html('whatever');
-			}
-	});
+		send_command(command);
 	}
 } 
+
+const send_command = (command) => {
+	console.log("Command: ",command);
+	const csrftoken = getCookie('csrftoken');
+	$.ajax({
+		type: 'PUT',
+		dataType: 'json',
+		url: `command/`,
+		headers: {"X-HTTP-Method-Override": "PUT", 'X-CSRFToken': csrftoken},
+		mode: 'same-origin',
+		dataType: "json",
+		data: `{"command":"${command}"}`,
+		success: function (msg, status) {
+		$('.shell-output').empty();
+		$('.buttons').empty();
+		var jsonUpdatedData = msg;
+		var buttons = jsonUpdatedData["result"]["buttons"]
+		alert(jsonUpdatedData["result"]["text"]);
+		for(let i=0;i<buttons.length;i++){
+			$('.buttons').append(`<button id="chw_button" onclick="get_button_2_tg(this)" type="button">${buttons[i]}</button>`);
+		}	
+		var res_arr = jsonUpdatedData["result"]["text"].split("\n");
+		for(let i=0;i<res_arr.length; i++){
+			if(res_arr[i] === ""){
+				//pass
+			}
+			else{
+				//console.log(res_arr[i]); переписать это говно, оно должно добавлятся в бокс
+				$('.shell-output').append(`<p>${res_arr[i]}</p>`);
+			}
+		 }
+		}
+	});
+}
+
+const get_button_2_tg = (objButton) => {
+	var button_text = objButton.innerHTML;
+	send_command(button_text);
+}
+
+const delete_player = () => {
+	const csrftoken = getCookie('csrftoken');
+	$.ajax({
+		type: 'DELETE',
+		dataType: 'json',
+		headers: {"X-HTTP-Method-Override": "DELETE", 'X-CSRFToken': csrftoken},
+		mode: 'same-origin',
+		success: function(){
+			alert("Player was deleted!");
+		}
+	})
+}
 
 const time = {
 	s: '',

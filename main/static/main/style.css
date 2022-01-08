@@ -182,11 +182,36 @@ label[for=id_session] {
   border-radius: 4px;
   box-sizing: border-box;
 }
+#input-command {
+  color: black;
+  display: block;
+  text-align: center;
+  margin-right: auto;
+  margin-left: auto;
+  box-sizing: border-box;
+  line-height: 150%;
+  font-size: .85em;
+}
+
 p {
   color: white;
   text-align: center;
 }
 .send-code {
+  background-color: grey;
+  display: block;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.delete-player {
+  background-color: brown;
+  display: block;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.send_shell_command {
   background-color: grey;
   display: block;
   margin-right: auto;

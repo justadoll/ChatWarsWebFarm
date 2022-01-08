@@ -14,7 +14,6 @@ from .forms import ChwForm
 from .chw_manager import ChwMaster
 from telethon.errors.rpcerrorlist import SessionPasswordNeededError
 import asyncio
-from channels.db import database_sync_to_async
 
 logger = settings.LOGGER
 chw_master = ChwMaster(api_id=settings.API_ID, api_hash=settings.API_HASH)
@@ -29,7 +28,6 @@ def auth_new_player():
     try:
         loop.run_until_complete(task)
     except SessionPasswordNeededError:
-        #TODO add http codes
         response["status"] = "2FA"
         response["status_code"] = 401
     except asyncio.exceptions.TimeoutError:
@@ -37,7 +35,6 @@ def auth_new_player():
         response["status"] = "timeout"
         response["status_code"] = 408
     else:
-        logger.debug("OK, i should save session!")
         session = client.session.save()
         response["status"] = "success"
         response["status_code"] = 200
@@ -46,8 +43,6 @@ def auth_new_player():
     return response
 
 def chw_manager(action, id, button=None, command=None):
-    # TODO: mathces for `action` from python3.10?
-    # delete -> await client.log_out()
     # https://stackoverflow.com/questions/62390314/how-to-call-asynchronous-function-in-django
     player = CW_players.objects.get(pk=id)
     loop = asyncio.new_event_loop()
@@ -55,27 +50,23 @@ def chw_manager(action, id, button=None, command=None):
     if action == "get_user_data":#TODO POST create and insert info to new chatWarsPlayers table
         async_result = loop.run_until_complete(chw_master.get_user_data(player))
         logger.debug(async_result)
-        loop.close()
     elif action == "quest_run":
         async_result = loop.run_until_complete(chw_master.mainQuestRun(player, button))
         logger.debug(async_result)
-        loop.close()
         player.status="🛌Sleep"
         player.save()
     elif action == "get_info":
         async_result = loop.run_until_complete(chw_master.get_player_info(player))
-        loop.close()
         return async_result
     elif action == "get_game_time":
         async_result = loop.run_until_complete(chw_master.get_game_time(player))
-        loop.close()
         return async_result
     elif action == "chat_shell":
         async_result = loop.run_until_complete(chw_master.chat_shell(player,command))
-        loop.close()
         return async_result
     else:
         logger.error("wtf?")
+    loop.close()
 
 @api_view(['GET','POST'])
 def players_list(request):
@@ -94,7 +85,7 @@ def players_list(request):
             return JsonResponse(serializer.data, status=201)
         return JsonResponse(serializer.errors, status=400)
 
-@api_view(['GET','PUT'])
+@api_view(['GET','PUT','DELETE'])
 def indiv_player(request,pk):
     try:
         player = CW_players.objects.get(pk=pk)
@@ -104,6 +95,9 @@ def indiv_player(request,pk):
     if request.method == "GET":
         serializer = PlayerSerializer(player,fields=('id','chw_username','username','status','player_class'))
         new_data = chw_manager("get_info", player.pk)
+        if not new_data:
+            context = {"status": "Player logouted!"}
+            return render(request, 'main/error.html', context)
         player.chw_username = new_data['player_username']
         player.player_class = new_data['player_class']
         player.lvl = new_data['lvl']
@@ -114,7 +108,6 @@ def indiv_player(request,pk):
         player.save()
         context = {'id':serializer.data['id'], 'username':serializer.data['chw_username'], 'status':new_data['status'], 'class':serializer.data['player_class'],'lvl':new_data['lvl'],'lvlup':new_data['lvlup']}
         return render(request, 'main/player.html', context)
-        #return JsonResponse(serializer.data)
 
     elif request.method == "PUT":
         data = JSONParser().parse(request)
@@ -128,22 +121,20 @@ def indiv_player(request,pk):
             serializer = PlayerSerializer(player, data=data, fields=('id','status'))
             if serializer.is_valid():
                 serializer.save()
-                #dct_data = serializer.data.__dict__
-                #user_data_request = dct_data['serializer'].data # geting data from user request with valid fields
-                #logger.debug(user_data_request)
-                for test in serializer:
-                    if test.value == "Run":
-                        logger.debug("Run, forest, run!")
-                        chw_manager("quest_run", player.pk, button2int[str_button])
-
-                        #logger.info(chw_manager("get_game_time", player.pk))
-                        #logger.info(chw_manager("get_user_data", player.pk))
-
-                        return JsonResponse(serializer.data)
-                    else:
-                        pass
+                logger.debug(f"{player.chw_username} Run, forest, run!")
+                chw_manager("quest_run", player.pk, button2int[str_button])
+                return JsonResponse(serializer.data)
+            else:
+                logger.error(f"{serializer.errors=}")
                 return JsonResponse({"response":"Something gone wrong"}, status=401)
-        return JsonResponse(serializer.errors, status=400)
+    elif request.method == "DELETE":
+        try:
+            player.delete()
+        except Exception as e:
+            logger.erroe(f"{e=}")
+            return JsonResponse({"status":"Something gone wrong!"}, status=400)
+        else:
+            return JsonResponse({"status":"OK"}, status=200)
 
 @api_view(['PUT'])
 def send_command(request, pk:int):
@@ -152,6 +143,7 @@ def send_command(request, pk:int):
     logger.debug(f"{data=}")
     player = CW_players.objects.get(pk=pk)
     response = chw_manager(action="chat_shell", id=player.pk, command=data['command'])
+    logger.debug(f"{response=}")
     
     return JsonResponse({"result":response}, status=200)
 

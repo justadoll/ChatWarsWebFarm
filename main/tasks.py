@@ -1,4 +1,3 @@
-from celery import shared_task
 from django.conf import settings
 from telethon import TelegramClient
 from telethon.sessions import StringSession

@@ -1,4 +1,4 @@
-<{% extends "main/base.html" %}
+{% extends "main/base.html" %}
 {% block title %}Player {{ id }}{% endblock %}
 	
 	{% block content %}
@@ -10,6 +10,19 @@
 		{% if lvlup %}<p>Hero have points for upgrading skills!</p>{% endif %}
 		<input type="text" id="input-command" maxlength="20" placeholder="Command">
 		<button type="submit" class="send_shell_command" onclick="chat_shell()">Submit</button>
+	</div>
+
+	<div class="container">
+		<div class="buttons" style="text-align: center;">
+			<button id="chw_button" onclick="get_button_2_tg(this)" type="button">🏅Герой</button>
+			<button id="chw_button" onclick="get_button_2_tg(this)" type="button">🍺Таверна</button>
+			<button id="chw_button" onclick="get_button_2_tg(this)" type="button">🏚Лавка</button>
+			<button id="chw_button" onclick="get_button_2_tg(this)" type="button">⚖️Биржа</button>
+			<button id="chw_button" onclick="get_button_2_tg(this)" type="button">▶️Быстрый бой</button>
 		</div>
-		<div id="shell-out"></div>
+	</div>
+
+	<div class="container">	
+		<div class="shell-output"></div>
+	</div>
 	{% endblock content %}
