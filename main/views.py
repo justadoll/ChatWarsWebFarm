@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from django.http import HttpResponse, JsonResponse
 from django.views.generic.edit import CreateView
 from django.conf import settings
@@ -148,8 +148,12 @@ def send_command(request, pk:int):
     return JsonResponse({"result":response}, status=200)
 
 def index(request):
-    cw_playa = CW_players.objects.order_by('-registration_date')
-    return render(request,'main/index.html', {'cw_playa':cw_playa})
+    if request.user.is_authenticated:
+        logger.debug(f"{request.user.username} authed and watching /main")
+        cw_playa = CW_players.objects.filter(user=request.user)
+        return render(request,'main/index.html', {'cw_playa':cw_playa})
+    else:
+        return redirect("dj_managment_app:login")
 
 class ChwCreateView(CreateView):
     template_name = 'main/create.html'

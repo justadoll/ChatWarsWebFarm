@@ -1,6 +1,9 @@
 from django.db import models
+from django.contrib.auth.models import User
+
 
 class CW_players(models.Model):
+    user=models.ForeignKey(User, on_delete=models.CASCADE, related_name="new_spending", null=True)
     chw_username=models.CharField(max_length=32)
     username=models.CharField(max_length=32,blank=True,null=True)
     phone_number=models.CharField(max_length=13,blank=True)

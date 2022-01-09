@@ -16,7 +16,7 @@
     
     <body>
       <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <a class="navbar-brand" href="{% url 'mainapp:main' %}">Django ChatWars Web Farm</a>
+        <a class="navbar-brand" href="{% url 'mainapp:main' %}">ChatWars Web Farm</a>
         <div class="collapse navbar-collapse" id="navbarText">
           <ul class="navbar-nav mr-auto">
             <li class="nav-item active">
@@ -24,6 +24,9 @@
             </li>
             <li class="nav-item">
               <a class="nav-link" href="{% url 'mainapp:add' %}">Add Player</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'dj_managment_app:logout' %}">Logout</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="#">About</a>

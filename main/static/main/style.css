@@ -127,11 +127,6 @@ input:checked + .slider:before {
   color: #867979;
 }
 
-#id_username {
-  display: block;
-  margin-right: auto;
-  margin-left: auto;
-}
 #id_phone_number {
   display: block;
   margin-right: auto;
