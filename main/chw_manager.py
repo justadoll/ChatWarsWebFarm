@@ -116,7 +116,7 @@ class ChwMaster():
         else:
             results['status'] = "¯\_(ツ)_/¯"
         await client.disconnect()
-        logger.info(f"{results=}")
+        logger.debug(f"{results=}")
         return results
 
     async def chat_shell(self,player_obj,command):

@@ -19,8 +19,10 @@ API_ID=env('API_ID')
 API_HASH=env('API_HASH')
 QR_LOGIN_TEXT = "tg://login?token=update_me"
 LOGGER.add("logs.json", format="{time} {level} {message}", level="ERROR", rotation="1 MB", compression="zip", serialize=True)
+JSON_MESSAGES = {"forbidden":{"status":"this is not your player or it does not exist, your request was logged..."},
+    "no_players":{"status:":"You haven't got any playes yet"}, "forb_meth":{"status":"This method is forbidden!"}}
 
-ALLOWED_HOSTS = ['10.64.47.2', '127.0.0.1']
+ALLOWED_HOSTS = ['127.0.0.1']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
