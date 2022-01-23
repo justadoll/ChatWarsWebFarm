@@ -18,6 +18,8 @@
                 <tbody>
                   {% if player.status == "🛌Sleep" %}
                       <tr class="table-active" id="{{ player.pk }}">
+                  {% elif player.status == "🐮Def-Cow" %}
+                      <tr class="table-dark" id="{{ player.pk }}">
                   {% else %}
                     <tr class="bg-success" id="{{ player.pk }}">
                   {% endif %}

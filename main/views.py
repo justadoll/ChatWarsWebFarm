@@ -11,7 +11,7 @@ from rest_framework.decorators import api_view
 from rest_framework.parsers import JSONParser
 
 from .models import CW_players
-from .tasks import make_qr_login
+from .tasks import make_qr_login, run_quest_task, def_cow_task
 from .serializers import PlayerSerializer
 from .forms import ChwForm
 
@@ -82,8 +82,9 @@ def players_list(request):
     serializer = PlayerSerializer(players, fields=('id','chw_username','status','player_class'), many=True)
     return JsonResponse(serializer.data, safe=False)
 
-@api_view(['GET','PUT','DELETE'])
+#@api_view(['GET','PUT','POST', 'DELETE'])
 @login_required
+@csrf_exempt
 def indiv_player(request,pk):
     try:
         player = CW_players.objects.filter(user=request.user, pk=pk)
@@ -124,15 +125,18 @@ def indiv_player(request,pk):
             logger.warning(f"User {request.user.username} with player {player.chw_username}:{player.pk=} already run!")
             return JsonResponse({"response":"Player already run!"}, status=208)
         else:
+            after_status = player.status
             serializer = PlayerSerializer(player, data=data, fields=('id','status'))
             if serializer.is_valid():
                 serializer.save()
                 logger.info(f"User {request.user.username} with player {player.chw_username}:{player.pk=} started runnig quest!")
-                chw_manager("quest_run", player.pk, button2int[str_button])
-                return JsonResponse(serializer.data)
+                task = run_quest_task.delay(p_id=player.pk, button=button2int[str_button], after_status=after_status)
+                logger.debug(f"{task.id=}")
+                return JsonResponse({"response":"Runnig quest!"}, status=200)
             else:
                 logger.error(f"{request.user.username=} {player.chw_username}:{player.pk=} {serializer.errors=}")
                 return JsonResponse({"response":"Something gone wrong"}, status=401)
+
     elif request.method == "DELETE":
         try:
             player.delete()
@@ -142,6 +146,17 @@ def indiv_player(request,pk):
         else:
             logger.success(f"User {request.user.username} deleted {player.chw_username}:{player.pk=}")
             return JsonResponse({"status":"OK"}, status=200)
+
+    elif request.method == "POST":
+        player = CW_players.objects.get(pk=pk)
+        task = def_cow_task.delay(user=request.user.username, pk=pk)
+        player.defcow = task.id
+        player.save()
+        logger.debug(f"{player.chw_username} def-cow id: {task.id}")
+        return JsonResponse({"status":"OK"}, status=200)
+        # TODO user revoke def-cow
+        # >>> from ChatWarsWebFarm.celery import celery_app
+        # >>> celery_app.control.revoke("10273f33-1cce-4bd2-a3a7-78d4b01ec407")
 
 #@api_view(['PUT'])
 @login_required

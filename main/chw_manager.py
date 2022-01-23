@@ -1,4 +1,4 @@
-from telethon.sync import TelegramClient
+from telethon.sync import TelegramClient, events
 from telethon.tl.functions.users import GetFullUserRequest
 from telethon.sessions import StringSession
 from telethon.errors.rpcerrorlist import AuthKeyUnregisteredError
@@ -223,6 +223,7 @@ class ChwMaster():
         await self.drink_poison(client, "Nature")
         await self.drink_poison(client, "Greed")
 
+        resutls_array = {"gold":"", "exp":"", "materials":{}}
         async for i in cast_range:
             await self.quest_auto(cli=client, lvl=lvl, button=button)
 
@@ -244,27 +245,31 @@ class ChwMaster():
         else:
             await asyncio.sleep(1)
             msg_time = await cli.get_messages("ChatWarsBot")
-                #logger.debug("Message:"+msg_time[0].message)
             msg_time = re.findall("\d+", str(msg_time[0].text))
             try:
-                msg_time = str(msg_time[0])
-                msg_time = int(msg_time)
+                msg_time = int(msg_time[0])
                 msg_time *= 60
                 logger.info(f"{info.user.username} time in quest: {msg_time}")
                 msg_time += 10
                 if button==3:
                     msg_time += 190
                 await asyncio.sleep(msg_time)
-                return True
+                results_msg = await cli.get_messages("ChatWarsBot")
+                logger.debug(f"{results_msg[0].text=}")
+                self.count_results(message=results_msg[0].text)
+                #return True
             except Exception as e:
-                #Битва близко. Сейчас не до приключений.
-                #Ты сейчас занят другим приключением. Попробуй позже.
                 logger.error(f"Something gone wrong!\n {e}")
-                return False
-            #await cli.send_message("ChatWarsBot", defence)
-            #return None?
-            #await asyncio.sleep(3)
-        return False
+                #return False
+        return
+        #return False
+    def count_results(self, message):
+        message = message.split('\n')
+        for text in message:
+            if text.startswith('Получено:'):
+                logger.debug(f"Erned: {text=}")
+            else:
+                logger.debug(f"Not erned: {text=}")
 
     # sub funcs TODO Class with init and rename of cli or something else
     async def get_game_time(self, player_obj):
@@ -306,8 +311,29 @@ class ChwMaster():
         stamina = int(stamina[0])
         return stamina
 
+    async def def_cow(self, client):
+        logger.debug("Connecting...")
+        await client.connect()
+        me = await client.get_me()
+        logger.info(f"[+] {me.first_name} connected!")
+        #await client.disconnect()
 
-class TelethonAuth():
-    def __init__(self, api_id, api_hash):
-        self.api_id = api_id
-        self.api_hash = api_hash
+        @client.on(events.NewMessage(chats=("ChatWarsBot")))
+        async def def_cow_handler(event):
+            await asyncio.sleep(1)
+            new_msg = event.message
+            if new_msg.message.endswith("КОРОВАН."):
+                logger.info(f"Detected a cow! Making delay...")
+                await asyncio.sleep(28)
+                msg = await client.get_messages("ChatWarsBot")
+                if await msg[0].click(0) == None:
+                    await msg[0].click()
+                    logger.error("None was detected, replying click...")
+                else:
+                    logger.info(f"Successfully defended cow from first time!")
+                    await client.disconnect()
+            else:
+                pass
+        
+        await client.run_until_disconnected()
+        logger.info("[-] Client disconnected!")
