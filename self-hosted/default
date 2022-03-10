@@ -1,0 +1,84 @@
+server {
+	listen 80 default_server;
+	listen [::]:80 default_server;
+
+	root /var/www/html;
+
+	server_name _;
+
+	location / {
+		# First attempt to serve request as file, then
+		# as directory, then fall back to displaying a 404.
+		try_files $uri $uri/ =404;
+	}
+
+}
+
+server {
+    	listen 443 ssl;
+	root /var/www/your.domain.com;
+	server_name your.domain.com; # managed by Certbot
+
+
+	location / {
+		try_files $uri $uri/ =404;
+	}
+
+	location = /favicon.ico { access_log off; log_not_found off; }
+
+
+    #listen [::]:443 ssl ipv6only=on; # managed by Certbot
+    #listen 443 ssl; # managed by Certbot
+    ssl_certificate /etc/letsencrypt/live/your.domain.com/fullchain.pem; # managed by Certbot
+    ssl_certificate_key /etc/letsencrypt/live/your.domain.com/privkey.pem; # managed by Certbot
+    include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
+}
+
+
+server {
+	root /var/www/html;
+    	server_name your.domain.com subdoma.your.domain.com; # managed by Certbot
+
+	# Add index.php to the list if you are using PHP
+	# index index.html index.htm index.nginx-debian.html;
+
+	location /static/ {
+		root /var/www/subdoma.your.domain.com/;
+	}
+
+	location / {
+		# First attempt to serve request as file, then
+		# as directory, then fall back to displaying a 404.
+		#try_files $uri $uri/ =404;
+		include proxy_params;
+		proxy_pass http://unix:/run/gunicorn.sock;
+	}
+
+	#location = /favicon.ico { access_log off; log_not_found off; }
+
+
+    listen [::]:443 ssl ipv6only=on; # managed by Certbot
+    listen 443 ssl; # managed by Certbot
+    ssl_certificate /etc/letsencrypt/live/subdoma.your.domain.com/fullchain.pem; # managed by Certbot
+    ssl_certificate_key /etc/letsencrypt/live/subdoma.your.domain.com/privkey.pem; # managed by Certbot
+    include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
+}
+
+server {
+    if ($host = your.domain.com) {
+        return 301 https://$host$request_uri;
+    } # managed by Certbot
+
+
+    if ($host = subdoma.your.domain.com) {
+        return 301 https://$host$request_uri;
+    } # managed by Certbot
+
+
+	listen 80 ;
+	listen [::]:80 ;
+    server_name your.domain.com subdoma.your.domain.com;
+    return 404; # managed by Certbot
+}

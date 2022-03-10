@@ -1,5 +1,6 @@
 import environ
 import os
+from redis import Redis
 from loguru import logger as LOGGER
 
 env = environ.Env(
@@ -14,15 +15,16 @@ DEBUG = env('DEBUG')
 
 SECRET_KEY = env('SECRET_KEY')
 
-# Telegram API
 API_ID=env('API_ID')
 API_HASH=env('API_HASH')
 QR_LOGIN_TEXT = "tg://login?token=update_me"
+
+REDIS = Redis(env("REDIS"))
 LOGGER.add("logs.json", format="{time} {level} {message}", level="ERROR", rotation="1 MB", compression="zip", serialize=True)
 JSON_MESSAGES = {"forbidden":{"status":"this is not your player or it does not exist, your request was logged..."},
     "no_players":{"status:":"You haven't got any playes yet"}, "forb_meth":{"status":"This method is forbidden!"}}
 
-ALLOWED_HOSTS = ['127.0.0.1']
+ALLOWED_HOSTS = ['127.0.0.1', 'your.domain.com']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -103,15 +105,14 @@ USE_I18N = True
 USE_L10N = True
 USE_TZ = True
 
-STATIC_URL = '/static/'
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
-VENV_PATH = os.path.dirname(BASE_DIR)
-STATIC_ROOT = os.path.join(VENV_PATH, 'static_root')
+STATIC_URL = 'static/'
+STATIC_ROOT = '/var/www/your.domain.com/static'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_REDIRECT_URL = '/main/'
+LOGOUT_REDIRECT_URL = '/accounts/login/'
 
-CELERY_BROKER_URL = 'redis://localhost:6379'
-CELERY_RESULT_BACKEND = 'redis://localhost:6379'
+CELERY_BROKER_URL = env("REDIS") #"redis://localhost:6379"
+CELERY_RESULT_BACKEND = env("REDIS") #"redis://localhost:6379"
 CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TASK_SERIALIZER = 'json'

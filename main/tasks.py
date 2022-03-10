@@ -9,6 +9,7 @@ import asyncio
 
 chw_master = ChwMaster(api_id=settings.API_ID, api_hash=settings.API_HASH)
 logger = settings.LOGGER
+redis = settings.REDIS
 
 
 @shared_task
@@ -47,6 +48,7 @@ async def make_qr_login():
     client = TelegramClient(StringSession(),api_id=settings.API_ID, api_hash=settings.API_HASH)
     await client.connect()
     qr_login = await client.qr_login()
-    settings.QR_LOGIN_TEXT = qr_login.url #global qr_url
+    logger.info(f"[+] QR_LOGIN_TEXT: {qr_login.url}")
+    redis.set("QR_LOGIN_TEXT", qr_login.url)
     task = asyncio.create_task(qr_login.wait())
     return client,task

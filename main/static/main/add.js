@@ -40,7 +40,7 @@ const get_qr = async () => {
         },
         timeout: 35000,
     });
-    await delay(2000);
+    await delay(3500);
     $.get("get_qr/",function(data,status){
         var parser = new DOMParser();
         var get_html = parser.parseFromString(data, 'text/html');

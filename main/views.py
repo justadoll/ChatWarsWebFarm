@@ -20,6 +20,7 @@ from telethon.errors.rpcerrorlist import SessionPasswordNeededError
 import asyncio
 
 logger = settings.LOGGER
+redis = settings.REDIS
 chw_master = ChwMaster(api_id=settings.API_ID, api_hash=settings.API_HASH)
 json_messages = settings.JSON_MESSAGES
 
@@ -207,5 +208,8 @@ def update_qr_and_auth(request):
 @api_view(["GET"])
 @login_required
 def give_qr_img(request):
-    context = {"qr":settings.QR_LOGIN_TEXT}
+    tg_url = redis.get("QR_LOGIN_TEXT")
+    tg_url = tg_url.decode("utf-8")
+    logger.info(f"[+] TELEGRAM LOGIN URL: {tg_url}")
+    context = {"qr":tg_url}
     return render(request,'main/qr.html', context)
