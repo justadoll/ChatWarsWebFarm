@@ -37,7 +37,10 @@ INSTALLED_APPS = [
     'users.apps.UsersConfig',
     'rest_framework',
     'qr_code',
+    'django_apscheduler',
 ]
+
+SCHEDULER_AUTOSTART = True
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

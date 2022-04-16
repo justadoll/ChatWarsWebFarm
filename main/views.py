@@ -113,7 +113,7 @@ def indiv_player(request,pk):
         if player.status == "":
             player.status = "🛌Sleep"
         player.save()
-        context = {'id':serializer.data['id'], 'username':serializer.data['chw_username'], 'status':new_data['status'], 'class':serializer.data['player_class'],'lvl':new_data['lvl'],'lvlup':new_data['lvlup']}
+        context = {'id':serializer.data['id'], 'username':serializer.data['chw_username'], 'status':new_data['status'], 'class':serializer.data['player_class'], 'lvl':new_data['lvl'], 'lvlup':new_data['lvlup'], 'stamina':new_data['stamina'], 'gold':new_data['gold'], 'saphire':new_data['saphire'], 'pogs':new_data['pogs']}
         logger.info(f"{request.user.username} updates info about {player.chw_username}:{player.pk=}")
         return render(request, 'main/player.html', context)
 

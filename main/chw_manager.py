@@ -109,6 +109,19 @@ class ChwMaster():
         lvl = int(re.findall("\d+",rd[0])[0])
         results['lvl'] = lvl
 
+        restamina = re.findall("Выносливость: \d+\/\d+", full_msg)
+        regold = re.findall("💰[-+]?\d+",full_msg)
+        sapf = re.findall("💎\d+",full_msg)
+        pogs = re.findall("👝\d+",full_msg)
+        additional_info_arr = {"stamina":restamina, "gold":regold, "saphire":sapf, "pogs":pogs}
+        for i in additional_info_arr:
+            if additional_info_arr[i]:
+                results[i] = additional_info_arr[i][0]
+            else:
+                results[i] = 0
+
+        #logger.debug(f"{client_data.username}: {restamina=} {regold=} {sapf=} {pogs=}")
+
         state = re.findall('Состояние:\n[🛌🛡⚔🔎🐫📯🌲🍄⛰]+[a-zА-Я]?.+',full_msg)
         if state:
             state = state[0].split(':')[-1][1:] #geting splited : and send withoun \n
