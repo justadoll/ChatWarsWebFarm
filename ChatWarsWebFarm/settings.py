@@ -24,7 +24,7 @@ LOGGER.add("logs.json", format="{time} {level} {message}", level="ERROR", rotati
 JSON_MESSAGES = {"forbidden":{"status":"this is not your player or it does not exist, your request was logged..."},
     "no_players":{"status:":"You haven't got any playes yet"}, "forb_meth":{"status":"This method is forbidden!"}}
 
-ALLOWED_HOSTS = ['127.0.0.1', 'your.domain.com']
+ALLOWED_HOSTS = env.list("ALLOWED_HOSTS")
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -109,7 +109,7 @@ USE_L10N = True
 USE_TZ = True
 
 STATIC_URL = 'static/'
-STATIC_ROOT = '/var/www/your.domain.com/static'
+STATIC_ROOT = '/var/www/cwwf.kurassh.xyz/static'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_REDIRECT_URL = '/main/'
 LOGOUT_REDIRECT_URL = '/accounts/login/'
