@@ -324,6 +324,22 @@ class ChwMaster():
         stamina = int(stamina[0])
         return stamina
 
+    async def send_report(self, player_obj):
+        """ Forward report message to parents """
+        parents = player_obj.send_report
+        client = await self.client_init(player_obj.session)
+        res = await self.chw_get_msg(client, '/report')
+        logger.debug(f"{parents=} {res[0].message=}")
+        if res:
+            for parent in parents:
+                try:
+                    await client.forward_messages(parent, res[0])
+                except Exception as e:
+                    logger.error(f"{parents=} {player_obj.pk=} {e}")
+        else:
+            logger.error(f"Error during forwarding report from {player_obj.pk}:{player_obj.chw_username} to {parents}")
+        await client.disconnect()
+
     async def def_cow(self, client):
         logger.debug("Connecting...")
         await client.connect()

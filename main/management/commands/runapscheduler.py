@@ -2,6 +2,8 @@ import logging
 
 from django.conf import settings
 from main.models import CW_players
+from main.chw_manager import ChwMaster
+import asyncio
 
 from apscheduler.schedulers.blocking import BlockingScheduler
 from apscheduler.triggers.cron import CronTrigger
@@ -11,13 +13,18 @@ from django_apscheduler.models import DjangoJobExecution
 from django_apscheduler import util
 
 import asyncio
-#logger = logging.getLogger(__name__)
 logger = settings.LOGGER
 
+chw_master = ChwMaster(api_id=settings.API_ID, api_hash=settings.API_HASH)
+
 def my_job():
+  loop = asyncio.new_event_loop()
+  asyncio.set_event_loop(loop)
   all_players = CW_players.objects.all()
   for player in all_players:
-    logger.debug(f"{player.username=}")
+    #group1 = await asyncio.gather(*[mng.sender(session_info, "", "/start") for session_info in full[0:25]])
+    async_result = loop.run_until_complete(chw_master.send_report(player_obj=player))
+    logger.debug(f"{async_result=}")
   logger.info("JOB FINISHED!")
 
 
@@ -42,7 +49,7 @@ class Command(BaseCommand):
       id="my_job",  # The `id` assigned to each job MUST be unique
       max_instances=10,
       replace_existing=True,
-      misfire_grace_time=60,
+      misfire_grace_time=120,
     )
     logger.info("Added job 'my_job'.")
 
