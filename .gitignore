@@ -1,0 +1,4 @@
+**/__pycache__
+.env
+cwwf_env/
+logs.json

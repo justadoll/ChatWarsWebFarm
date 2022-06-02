@@ -1,0 +1,73 @@
+{% extends "main/base.html" %}
+
+{% block title %}::Dashboard::{% endblock %}
+{% block refresh %}<meta http-equiv="refresh" content="60">{% endblock %}
+{% block content %}
+            <table class="table table-striped table-bordered" id="table">
+                <thead class="thead-dark">
+                    <tr>
+                        <th class="text-center">UserPicture</th>
+                        <th class="text-center">Player Name</th>
+                        <th class="text-center">Username</th>
+                        <th class="text-center">Class</th>
+                        <th class="text-center">Status</th>
+                        <th class="text-center">Run Quest</th>
+                    </tr>
+                </thead>
+                {% for player in cw_playa %}
+                <tbody>
+                  {% if player.status == "🛌Sleep" %}
+                      <tr class="table-active" id="{{ player.pk }}">
+                  {% elif player.status == "🐮Def-Cow" %}
+                      <tr class="table-dark" id="{{ player.pk }}">
+                  {% else %}
+                    <tr class="bg-success" id="{{ player.pk }}">
+                  {% endif %}
+                        <td class="text-center">404</td>
+                        <td class="text-center"><a href="{% url 'mainapp:player' player.pk %}">{{ player.chw_username }}</a></td> <!-- <a href="player/{{ player.pk }}"> -->
+                        <td class="text-center">{{ player.username }}</td>
+                        <td class="text-center">{{ player.player_class }}</td>
+                        <td class="text-center">{{ player.status }}</td> <!-- setting colour depends from status -->
+                        <td class="text-center">
+                          <div class="dropdown">
+                            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                              Place to go
+                            </button>
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
+                              <button class="dropdown-item forest" type="button">🌲Лес</button>
+                              <button class="dropdown-item swamp" type="button">🍄Болото</button>
+                              <button class="dropdown-item mount" type="button">⛰Долина</button>
+                              <button class="dropdown-item cow" type="button">🗡Корованы</button>
+                            </div>
+                          </div>
+                      
+                  </tr>
+                </tbody>
+                {% endfor %}
+
+            </table>
+            </div>
+        </table>
+        
+        <script>
+          $("button.forest").click(function(event) {
+            rw_id = event.target.parentNode.parentNode.parentNode.parentNode.id;
+            questRun(rw_id,'forest');
+          });
+          
+          $("button.swamp").click(function(event) {
+            rw_id = event.target.parentNode.parentNode.parentNode.parentNode.id;
+            questRun(rw_id,'swamp');
+          });
+          
+          $("button.mount").click(function(event) {
+            rw_id = event.target.parentNode.parentNode.parentNode.parentNode.id;
+            questRun(rw_id, 'mount');
+          });
+
+          $("button.cow").click(function(event) {
+            rw_id = event.target.parentNode.parentNode.parentNode.parentNode.id;
+            questRun(rw_id,'cow');
+          });
+        </script>
+{% endblock content %}

@@ -1,0 +1,22 @@
+{% extends "main/base.html" %}
+{% block title %}::Login::{% endblock %}
+
+{% block content %}
+
+    {% if form.errors %}
+    <p>Login or passowrd is incorrect!</p>
+    {% endif %}
+
+    {% if next %}
+    <p>You can't access this page!</p>
+    {% endif %}
+    <form method="post" action="{% url 'dj_managment_app:login' %}">
+        {% csrf_token %}
+
+        <p>Username: {{ form.username }}</p>
+        <p>Password: {{form.password }}</p>
+        <input id="qr-code" type="submit" value="login">
+        <input type="hidden" name="next" value="{{ next }}">
+    </form>
+    <a style="text-align: center;" href="{% url 'usersapp:register' %}">No account</a>
+{% endblock content %}

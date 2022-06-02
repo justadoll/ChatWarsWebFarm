@@ -1,0 +1,17 @@
+[Unit]
+Description=Gunicorn daemon
+Requires=gunicorn.socket
+After=network.target
+
+[Service]
+User=<username>
+Group=www-data
+WorkingDirectory=/home/<username>/ChatWarsWebFarm/
+ExecStart=/home/<username>/ChatWarsWebFarm/cwwf_env/bin/gunicorn \
+          --access-logfile - \
+          --workers 3 \
+          --bind unix:/run/gunicorn.sock \
+          ChatWarsWebFarm.wsgi:application
+
+[Install]
+WantedBy=multi-user.target

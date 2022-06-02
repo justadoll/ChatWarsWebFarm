@@ -1,0 +1,7 @@
+{% extends "main/base.html" %}
+{% block title %}Error{% endblock %}
+	
+	{% block content %}
+    <p style="color:red">{{ status }}</p>
+    <button type="submit" class="delete-player" onclick="delete_player()">Delete player</button>
+    {% endblock content %}

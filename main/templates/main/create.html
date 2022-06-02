@@ -1,0 +1,15 @@
+{% extends "main/base.html" %}
+{% load static %}
+{% block title %}::Registrate User::{% endblock %}
+    {% block content %}
+        <h3 class="info-header" style="text-align:center;">Добавляем нового игрока</h3>
+        <img src="#" id="qr-code">
+        <form method="POST">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="button" class="send-code" onclick="get_qr()">Update QR</button>
+            <input type="hidden" id="reg-acc" value="Разегестрировать аккаунт">
+            </form>
+    
+    <script src="{% static 'main/add.js' %}"></script>
+    {% endblock content %}
