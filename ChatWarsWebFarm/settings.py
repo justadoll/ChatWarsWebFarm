@@ -19,7 +19,8 @@ API_ID=env('API_ID')
 API_HASH=env('API_HASH')
 QR_LOGIN_TEXT = "tg://login?token=update_me"
 
-REDIS = Redis(env("REDIS"))
+spl_redis = env("REDIS").split(":")
+REDIS = Redis(host=spl_redis[1][2:], port=spl_redis[2])
 LOGGER.add("logs.json", format="{time} {level} {message}", level="ERROR", rotation="1 MB", compression="zip", serialize=True)
 JSON_MESSAGES = {"forbidden":{"status":"this is not your player or it does not exist, your request was logged..."},
     "no_players":{"status:":"You haven't got any playes yet"}, "forb_meth":{"status":"This method is forbidden!"}}

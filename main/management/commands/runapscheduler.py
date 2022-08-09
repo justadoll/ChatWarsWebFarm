@@ -45,15 +45,33 @@ class Command(BaseCommand):
 
     scheduler.add_job(
       my_job,
-      trigger=CronTrigger(second="*/30"),  # Every 10 seconds
-      id="my_job",  # The `id` assigned to each job MUST be unique
+      trigger=CronTrigger(hour="09",minute="10"),
+      id="morning_send_report_job",
       max_instances=10,
       replace_existing=True,
       misfire_grace_time=120,
     )
-    logger.info("Added job 'my_job'.")
 
-    """
+    scheduler.add_job(
+      my_job,
+      trigger=CronTrigger(hour="17", minute="10"),
+      id="afternoon_send_report_job",
+      max_instances=10,
+      replace_existing=True,
+      misfire_grace_time=120,
+    )
+
+    scheduler.add_job(
+      my_job,
+      trigger=CronTrigger(hour="01", minute="10"),
+      id="evening_send_report_job",
+      max_instances=10,
+      replace_existing=True,
+      misfire_grace_time=120,
+    )
+
+    logger.info("Added 'send_report' jobs")
+
     scheduler.add_job(
       delete_old_job_executions,
       trigger=CronTrigger(
@@ -66,7 +84,6 @@ class Command(BaseCommand):
     logger.info(
       "Added weekly job: 'delete_old_job_executions'."
     )
-    """
 
     try:
       logger.info("Starting scheduler...")

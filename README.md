@@ -15,4 +15,7 @@
  * If you running in vpn/localhost - add `ALLOWED_HOSTS` IPS to `ChatWarsWebFarm/settings.py`
  * `python manage.py runserver 0.0.0.0:8080`
 
+PoC:
+![Player](https://github.com/justadoll/ChatWarsWebFarm/blob/main/git_pics/1.jpg?raw=true)
+
 ![](https://komarev.com/ghpvc/?username=ChatWarsWebFarm&color=green&label=Views)

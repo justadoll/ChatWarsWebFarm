@@ -330,7 +330,7 @@ class ChwMaster():
         client = await self.client_init(player_obj.session)
         res = await self.chw_get_msg(client, '/report')
         logger.debug(f"{parents=} {res[0].message=}")
-        if res:
+        if res and parents:
             for parent in parents:
                 try:
                     await client.forward_messages(parent, res[0])
