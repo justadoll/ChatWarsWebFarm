@@ -18,4 +18,12 @@
 PoC:
 ![Player](https://github.com/justadoll/ChatWarsWebFarm/blob/main/git_pics/1.jpg?raw=true)
 
+![TG Player](https://github.com/justadoll/ChatWarsWebFarm/blob/main/git_pics/2.jpg?raw=true)
+
+![Run funcs](https://github.com/justadoll/ChatWarsWebFarm/blob/main/git_pics/3.jpg?raw=true)
+
+![Running](https://github.com/justadoll/ChatWarsWebFarm/blob/main/git_pics/4.jpg?raw=true)
+
+![TG Running](https://github.com/justadoll/ChatWarsWebFarm/blob/main/git_pics/5.jpg?raw=true)
+
 ![](https://komarev.com/ghpvc/?username=ChatWarsWebFarm&color=green&label=Views)
