@@ -14,6 +14,10 @@
 ### 5) Run server:
  * If you running in vpn/localhost - add `ALLOWED_HOSTS` IPS to `ChatWarsWebFarm/settings.py`
  * `python manage.py runserver 0.0.0.0:8080`
+### 6) Run celery:
+ * `celery -A ChatWarsWebFarm worker --loglevel=info` in dir with manage.py
+### 7) Run apscheduller:
+ * `python3 manage.py runapscheduler`
 
 PoC:
 ![Player](https://github.com/justadoll/ChatWarsWebFarm/blob/main/git_pics/1.jpg?raw=true)
